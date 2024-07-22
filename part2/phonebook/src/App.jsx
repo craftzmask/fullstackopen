@@ -11,7 +11,8 @@ const App = () => {
   const [textSearch, setTextSearch] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
+    axios
+      .get('http://localhost:3001/persons')
       .then(res => setPersons(res.data))
   }, [])
 
@@ -26,9 +27,13 @@ const App = () => {
     if (found) {
       alert(`${name} is already added to phonebook`)
     } else {
-      setPersons(persons.concat({ name, number }))
-      setName('')
-      setNumber('')
+      axios
+        .post('http://localhost:3001/persons', { name, number })
+        .then(res => {
+          setPersons(persons.concat(res.data))
+          setName('')
+          setNumber('')
+        })
     }
   }
 
