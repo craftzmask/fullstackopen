@@ -37,6 +37,10 @@ const App = () => {
             setNumber('')
             notify(`Updated ${updatedPerson.name}`, 'success')
           })
+          .catch(() => {
+            setPersons(persons.filter(p => p.id !== found.id))
+            notify(`Info of ${found.name} has already been removed from server`, 'error')
+          })
       }
     } else {
       personService.create({ name, number })
