@@ -24,7 +24,16 @@ const App = () => {
     e.preventDefault()
     const found = persons.find(p => p.name === name)
     if (found) {
-      alert(`${name} is already added to phonebook`)
+      if (confirm(`${name} is already added to phonebook, replace the old number with a new one?`)) {
+        personService.update({ ...found, number })
+          .then(updatedPerson => {
+            setPersons(persons.map(p =>
+              p.id !== updatedPerson.id ? p : updatedPerson
+            ))
+            setName('')
+            setNumber('')
+          })
+      }
     } else {
       personService.create({ name, number })
         .then(savedPerson => {
