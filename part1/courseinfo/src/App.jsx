@@ -18,10 +18,16 @@ const Content = ({ parts }) => {
   )
 }
 
-const Total = (props) => {
-  const total = props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises
+const Total = ({ parts }) => {
+  let total = 0
+  for (let i = 0; i < parts.length; i++) {
+    total += parts[i].exercises
+  }
+
   return (
-    <p>Number of exercises {total}</p>
+    <p>
+      <strong>total of {total} exercises</strong>
+    </p>
   )
 }
 
