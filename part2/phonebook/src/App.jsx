@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import personService from './services/persons'
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [textSearch, setTextSearch] = useState('')
+  const [message, setMessage] = useState(null)
+  const [style, setStyle] = useState(null)
 
   useEffect(() => {
     personService.getAll()
@@ -32,6 +35,7 @@ const App = () => {
             ))
             setName('')
             setNumber('')
+            notify(`Updated ${updatedPerson.name}`, 'success')
           })
       }
     } else {
@@ -40,6 +44,7 @@ const App = () => {
           setPersons(persons.concat(savedPerson))
           setName('')
           setNumber('')
+          notify(`Added ${savedPerson.name}`, 'success')
         })
     }
   }
@@ -49,8 +54,19 @@ const App = () => {
       personService.remove(person)
         .then(() => {
           setPersons(persons.filter(p => p.id !== person.id))
+          notify(`Deleted ${person.name}`, 'success')
         })
     }
+  }
+
+  const notify = (message, style) => {
+    setMessage(message)
+    setStyle(style)
+
+    setTimeout(() => {
+      setMessage(null)
+      setStyle(null)
+    }, 5000)
   }
 
   const handleNameChange = e => setName(e.target.value)
@@ -62,6 +78,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={message} style={style} />
+
       <Filter
         value={textSearch}
         onChange={handleTextSearchChange} />
