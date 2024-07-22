@@ -35,6 +35,15 @@ const App = () => {
     }
   }
 
+  const handleDeleteClick = person => {
+    if (confirm(`Delete ${person.name}?`)) {
+      personService.remove(person)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== person.id))
+        })
+    }
+  }
+
   const handleNameChange = e => setName(e.target.value)
 
   const handleNumberChange = e => setNumber(e.target.value)
@@ -57,7 +66,9 @@ const App = () => {
         onSubmit={handleSubmit} />
 
       <h2>Numbers</h2>
-      <Persons persons={filtedPersons} />
+      <Persons
+        persons={filtedPersons}
+        onDelete={handleDeleteClick} />
     </div>
   )
 }
