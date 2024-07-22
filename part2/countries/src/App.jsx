@@ -6,6 +6,7 @@ import Filter from './components/Filter'
 function App() {
   const [countries, setCountries] = useState([])
   const [textSearch, setTextSearch] = useState('')
+  const [countryShown, setCountryShown] = useState(null)
 
   const filteredCountries = textSearch === ''
     ? []
@@ -24,13 +25,20 @@ function App() {
     setTextSearch(e.target.value)
   }
 
+  const handleShowClick = country => {
+    setCountryShown(country)
+  }
+
   return (
     <>
       <Filter
         value={textSearch}
         onChange={handleTextSearchChange} />
 
-      <Countries countries={filteredCountries} />
+      <Countries
+        countries={filteredCountries}
+        countryShown={countryShown}
+        onClick={handleShowClick} />
     </>
   )
 }
