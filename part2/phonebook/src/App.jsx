@@ -24,17 +24,32 @@ const App = () => {
     return name.includes(search.toLowerCase())
   })
 
+  const resetFields = () => {
+    setName('')
+    setNumber('')
+  }
+
   const handleSubmit = e => {
     e.preventDefault()
-    if (persons.find(p => p.name === name)) {
-      alert(`${name} is already in the phonebook`)
+    
+    const foundPerson = persons.find(p => p.name === name)
+    if (foundPerson) {
+      if (confirm(`${name} is already added to the phonebook, replace the old number with the new one?`)) {
+        const updatedPerson = { ...foundPerson, number }
+        personService
+          .updatePerson(updatedPerson)
+          .then(data => {
+            setPersons(persons.map(p => p.id === data.id ? data : p))
+            resetFields()
+          })
+      }
     } else {
       const personObject = { name, number }
       personService
         .createPerson(personObject)
         .then(data => {
           setPersons(persons.concat(data))
-          setName('')
+          resetFields()
         })
     }
   }
