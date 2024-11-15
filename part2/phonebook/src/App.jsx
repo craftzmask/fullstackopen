@@ -54,6 +54,11 @@ const App = () => {
             resetFields()
             notify(`Updated ${data.name}'s phone number`, 'success')
           })
+          .catch(() => {
+            setPersons(persons.filter(p => p.id !== foundPerson.id))
+            resetFields()
+            notify(`Info of ${foundPerson.name} has been removed from the server`, 'error')
+          })
       }
     } else {
       const personObject = { name, number }
