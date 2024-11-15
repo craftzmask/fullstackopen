@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Filter from './components/FIlter'
 import PersonForm from './components/PersonForm'
 import PersonList from './components/PersonList'
-import { useEffect } from 'react'
+import Notification from './components/Notification'
 
 import personService from './services/persons'
 
@@ -12,6 +12,8 @@ const App = () => {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState('')
 
   useEffect(() => {
     personService
@@ -24,6 +26,15 @@ const App = () => {
     return name.includes(search.toLowerCase())
   })
 
+  const notify = (message, status, duration=5) => {
+    setMessage(message)
+    setStatus(status)
+    setTimeout(() => {
+      setMessage('')
+      setStatus('')
+    }, duration * 1000)
+  }
+
   const resetFields = () => {
     setName('')
     setNumber('')
@@ -31,7 +42,7 @@ const App = () => {
 
   const handleSubmit = e => {
     e.preventDefault()
-    
+
     const foundPerson = persons.find(p => p.name === name)
     if (foundPerson) {
       if (confirm(`${name} is already added to the phonebook, replace the old number with the new one?`)) {
@@ -41,6 +52,7 @@ const App = () => {
           .then(data => {
             setPersons(persons.map(p => p.id === data.id ? data : p))
             resetFields()
+            notify(`Updated ${data.name}'s phone number`, 'success')
           })
       }
     } else {
@@ -50,6 +62,7 @@ const App = () => {
         .then(data => {
           setPersons(persons.concat(data))
           resetFields()
+          notify(`Added ${data.name}`, 'success')
         })
     }
   }
@@ -67,6 +80,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={message}
+        status={status} />
       <Filter
         value={search}
         onChange={e => setSearch(e.target.value)} />
