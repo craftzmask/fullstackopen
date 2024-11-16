@@ -11,9 +11,9 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-morgan.token('body', (req, res) => JSON.stringify(req.body))
+morgan.token('body', (req, _) => JSON.stringify(req.body))
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (_, res) => {
   Person.find({})
     .then(data => res.json(data))
 })
@@ -56,7 +56,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
     .catch(err => next(err))
 })
 
-app.get('/info', (req, res) => {
+app.get('/info', (_, res) => {
   Person.find({})
     .then(data => {
       res.send(`

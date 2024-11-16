@@ -23,7 +23,7 @@ const personSchema = new mongoose.Schema({
     }
   }
 })
-  
+
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

@@ -28,7 +28,7 @@ if (length === 3) {
         console.log(`${p.name} ${p.number}`)
       )
       mongoose.connection.close()
-    }) 
+    })
 }
 
 if (length === 5) {
