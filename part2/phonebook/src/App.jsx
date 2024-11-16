@@ -69,6 +69,7 @@ const App = () => {
           resetFields()
           notify(`Added ${data.name}`, 'success')
         })
+        .catch(err => notify(err.response.data.error, 'error'))
     }
   }
 
