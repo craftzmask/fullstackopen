@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
   { 
@@ -54,7 +56,7 @@ app.post('/api/persons', (req, res) => {
       error: 'name is already existed'
     })
   }
-  
+
   person.id = Math.floor(Math.random() * 1000000000)
   persons = persons.concat(person)
   res.json(person)
