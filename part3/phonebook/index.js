@@ -34,10 +34,11 @@ app.post('/api/persons', (req, res) => {
   person.save().then(data => res.json(data))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person
     .findByIdAndDelete(req.params.id)
     .then(() => res.status(204).end())
+    .catch(err => next(err))
 })
 
 app.get('/info', (req, res) => {
@@ -46,6 +47,18 @@ app.get('/info', (req, res) => {
     <p>${new Date()}</p>
   `)
 })
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message)
+  if (err.name === 'CastError') {
+    return res.status(400).json({
+      error: 'malformatted id'
+    })
+  }
+  next(err)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
