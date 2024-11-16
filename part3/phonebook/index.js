@@ -46,7 +46,7 @@ app.put('/api/persons/:id', (req, res, next) => {
       context: 'query'
     })
     .then(data => res.json(data))
-    .next(err => next(err))
+    .catch(err => next(err))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
