@@ -18,15 +18,16 @@ app.get('/api/persons', (req, res) => {
     .then(data => res.json(data))
 })
 
-app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  
-  const person = persons.find(p => p.id === id)
-  if (person) {
-    res.json(person)
-  } else {
-    res.status(404).end()
-  }
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        res.json(person)
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(err => next(err))
 })
 
 app.post('/api/persons', (req, res) => {
@@ -39,6 +40,7 @@ app.put('/api/persons/:id', (req, res, next) => {
   Person
     .findByIdAndUpdate(req.params.id, person, { new: true })
     .then(data => res.json(data))
+    .next(err => next(err))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
@@ -49,10 +51,13 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.get('/info', (req, res) => {
-  res.send(`
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${new Date()}</p>
-  `)
+  Person.find({})
+    .then(data => {
+      res.send(`
+        <p>Phonebook has info for ${data.length} people</p>
+        <p>${new Date()}</p>
+      `)
+    })
 })
 
 const errorHandler = (err, req, res, next) => {
