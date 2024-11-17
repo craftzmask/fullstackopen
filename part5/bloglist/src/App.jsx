@@ -17,33 +17,51 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const user = localStorage.getItem('user')
+    if (user) {
+      setUser(JSON.parse(user))
+    }
+  }, [])
+
   const login = async e => {
     e.preventDefault()
 
     const user = await loginService.login(username, password)
     if (user) {
       setUser(user)
+      localStorage.setItem('user', JSON.stringify(user))
       setUsername('')
       setPassword('')
     }
   }
 
+  const logout = () => {
+    setUser(null)
+    localStorage.clear()
+  }
+
   if (user === null) {
     return (
-      <LoginForm
-        onSubmit={login}
-        username={username}
-        onUsernameChange={e => setUsername(e.target.value)}
-        password={password}
-        onPasswordChange={e => setPassword(e.target.value)}
-      />
+      <div>
+        <h2>Login</h2>
+        <LoginForm
+          onSubmit={login}
+          username={username}
+          onUsernameChange={e => setUsername(e.target.value)}
+          password={password}
+          onPasswordChange={e => setPassword(e.target.value)} />
+      </div>
     )
   }
 
   return (
     <div>
       <h2>blogs</h2>
-      <p>{user.name} logged in</p>
+      <p>
+        {user.name} logged in
+        <button onClick={logout}>logout</button>
+      </p>
       < BlogList blogs={blogs} />
     </div>
   )
