@@ -2,6 +2,7 @@ const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const app = require('../app')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const User = require('../models/user')
 const listHelper = require('../utils/list_helper')
@@ -10,6 +11,15 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await User.deleteMany({})
+
+  const passwordHash = await bcrypt.hash('root', 10)
+  const user = new User({
+    username: 'root',
+    name: 'root',
+    passwordHash
+  })
+
+  await user.save()
 })
 
 test('a valid user can create', async () => {
@@ -28,6 +38,48 @@ test('a valid user can create', async () => {
 
   const usernames = usersAtEnd.map(u => u.username)
   assert(usernames.includes(res.body.username))
+})
+
+test('username must be unique', async () => {
+  await api
+    .post('/api/users')
+    .send({
+      username: 'root',
+      name: 'root',
+      password: 'root'
+    })
+    .expect(400)
+  
+  const usersAtEnd = await listHelper.usersInDb()
+  assert.strictEqual(usersAtEnd.length, 1)
+})
+
+test('username too short cannot create', async () => {
+  await api
+    .post('/api/users')
+    .send({
+      username: 'a',
+      name: 'John',
+      password: 'simple'
+    })
+    .expect(400)
+
+  const usersAtEnd = await listHelper.usersInDb()
+  assert.strictEqual(usersAtEnd.length, 1)
+})
+
+test('password too short cannot create', async () => {
+  await api
+    .post('/api/users')
+    .send({
+      username: 'admin',
+      name: 'John',
+      password: 's'
+    })
+    .expect(400)
+
+  const usersAtEnd = await listHelper.usersInDb()
+  assert.strictEqual(usersAtEnd.length, 1)
 })
 
 after(async () => {
