@@ -1,4 +1,5 @@
-const logger = require('./logger')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
 const errorHandler = (err, req, res, next) => {
   if (err.name === 'CastError') {
@@ -36,6 +37,20 @@ const tokenExtractor = (req, res, next) => {
   next()
 }
 
+const userExtractor = async (req, res, next) => {
+  const token = jwt.verify(req.token, process.env.SECRET)
+  if (!token.id) {
+    return res.status(401).json({
+      error: 'Unauthorized'
+    })
+  }
+  req.user = await User.findById(token.id)
+  next()
+}
+
 module.exports = {
-  errorHandler, unknownEndpoint, tokenExtractor
+  errorHandler,
+  unknownEndpoint,
+  tokenExtractor,
+  userExtractor
 }

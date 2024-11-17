@@ -1,8 +1,6 @@
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
-
 const Blog = require('../models/blog')
-const User = require('../models/user')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({})
@@ -11,16 +9,8 @@ blogsRouter.get('/', async (req, res) => {
   res.json(blogs)
 })
 
-blogsRouter.post('/', async (req, res) => {
-  const token = jwt.verify(req.token, process.env.SECRET)
-
-  if (!token.id) {
-    return res.status(401).json({
-      error: 'Unauthorized'
-    })
-  }
-
-  const user = await User.findById(token.id)
+blogsRouter.post('/', userExtractor, async (req, res) => {
+  const user = req.user
 
   const blog = new Blog({
     ...req.body,
@@ -42,16 +32,8 @@ blogsRouter.put('/:id', async (req, res) => {
   res.json(blog)
 })
 
-blogsRouter.delete('/:id', async (req, res) => {
-  const token = jwt.verify(req.token, process.env.SECRET)
-
-  if (!token.id) {
-    return res.status(401).json({
-      error: 'Unauthorized'
-    })
-  }
-
-  const user = await User.findById(token.id)
+blogsRouter.delete('/:id', userExtractor, async (req, res) => {
+  const user = req.user
 
   const blog = await Blog.findById(req.params.id)
 
