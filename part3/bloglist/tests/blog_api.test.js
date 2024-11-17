@@ -31,7 +31,7 @@ test('each blog must have an id', async () => {
   res.body.forEach(b => assert(b.hasOwnProperty('id')))
 })
 
-test.only('A valid blog can be added', async () => {
+test('A valid blog can be added', async () => {
   await api.post('/api/blogs')
     .send({
       title: "Eloquent JavasSript",
@@ -47,6 +47,19 @@ test.only('A valid blog can be added', async () => {
 
   const titles = blogsAtEnd.map(b => b.title)
   assert(titles.includes('Eloquent JavasSript'))
+})
+
+test('likes property default to 0', async () => {
+  const res = await api.post('/api/blogs')
+    .send({
+      title: "Eloquent JavasSript",
+      author: "Marijn Haverbeke",
+      url: "https://eloquentjavascript.net/",
+    })
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  assert.strictEqual(res.body.likes, 0)
 })
 
 after(async () => {
