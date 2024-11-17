@@ -100,6 +100,22 @@ test('delete a blog', async () => {
   assert(!titles.includes(blogToDelete.title)) 
 })
 
+test.only('update likes of the blog', async () => {
+  const blogsAtStart = await listHelper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+
+  const res = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send({
+      ...blogToUpdate,
+      likes: blogToUpdate.likes + 1
+    })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(res.body.likes, blogToUpdate.likes + 1)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
