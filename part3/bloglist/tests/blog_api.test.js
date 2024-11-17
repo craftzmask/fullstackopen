@@ -23,12 +23,30 @@ test('Return correct amount of blog posts', async () => {
   assert.strictEqual(res.body.length, listHelper.initialBlogs.length)
 })
 
-test.only('each blog must have an id', async () => {
+test('each blog must have an id', async () => {
   const res = await api.get('/api/blogs')
 
   res.body.forEach(b => assert(!b.hasOwnProperty('_id')))
 
   res.body.forEach(b => assert(b.hasOwnProperty('id')))
+})
+
+test.only('A valid blog can be added', async () => {
+  await api.post('/api/blogs')
+    .send({
+      title: "Eloquent JavasSript",
+      author: "Marijn Haverbeke",
+      url: "https://eloquentjavascript.net/",
+      likes: 10,
+    })
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await listHelper.blogsInDb()
+  assert(blogsAtEnd.length, listHelper.initialBlogs.length + 1)
+
+  const titles = blogsAtEnd.map(b => b.title)
+  assert(titles.includes('Eloquent JavasSript'))
 })
 
 after(async () => {
