@@ -82,6 +82,13 @@ test('password too short cannot create', async () => {
   assert.strictEqual(usersAtEnd.length, 1)
 })
 
+test('user can login with valid username and password', async () => {
+  await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'root' })
+    .expect(200)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
