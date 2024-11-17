@@ -12,13 +12,22 @@ const User = require('../models/user')
 let user = null
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
-  let blogs = listHelper.initialBlogs.map(b => new Blog(b))
-  blogs = blogs.map(b => b.save())
-  await Promise.all(blogs)
-
   await User.deleteMany({})
   user = await listHelper.createUser()
+
+  await listHelper.createUser('admin', 'admin')
+
+  await Blog.deleteMany({})
+  let blogs = listHelper.initialBlogs.map(b => {
+    const blog = new Blog({ ...b, user: user._id })
+    return blog
+  })
+
+  for (const b of blogs) {
+    const savedBlog = await b.save()
+    user.blogs.push(savedBlog._id)
+    await user.save()
+  }
 })
 
 test('Return correct amount of blog posts', async () => {
@@ -100,11 +109,17 @@ test('missing url cannot be added', async () => {
   assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
 })
 
-test('delete a blog', async () => {
+test('delete a blog by its author', async () => {
   const blogsAtStart = await listHelper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
+  
+  const res = await api.post('/api/login')
+    .send({ username: 'root', password: 'root' })
+    .expect(200)
+
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${res.body.token}`)
     .expect(204)
   
   const blogsAtEnd = await listHelper.blogsInDb()
@@ -112,6 +127,26 @@ test('delete a blog', async () => {
 
   const titles = blogsAtEnd.map(b => b.title)
   assert(!titles.includes(blogToDelete.title)) 
+})
+
+test('cannot delete other blogs', async () => {
+  const blogsAtStart = await listHelper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+  
+  const res = await api.post('/api/login')
+    .send({ username: 'admin', password: 'admin' })
+    .expect(200)
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${res.body.token}`)
+    .expect(401)
+  
+  const blogsAtEnd = await listHelper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
+
+  const titles = blogsAtEnd.map(b => b.title)
+  assert(titles.includes(blogToDelete.title)) 
 })
 
 test('update likes of the blog', async () => {

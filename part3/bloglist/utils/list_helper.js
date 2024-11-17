@@ -102,15 +102,15 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
-const createUser = async () => {
-  const passwordHash = await bcrypt.hash('root', 10)
+const createUser = async (username='root', password='root') => {
+  const passwordHash = await bcrypt.hash(password, 10)
   const user = new User({
-    username: 'root',
+    username,
     name: 'root',
     passwordHash
   })
   const savedUser = await user.save()
-  return savedUser.toJSON()
+  return savedUser
 }
 
 module.exports = {
