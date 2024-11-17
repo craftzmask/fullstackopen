@@ -86,6 +86,19 @@ test('missing url cannot be added', async () => {
   assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
 })
 
+test('delete a blog', async () => {
+  const blogsAtStart = await listHelper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+  
+  const blogsAtEnd = await listHelper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length - 1)
+
+  const titles = blogsAtEnd.map(b => b.title)
+  assert(!titles.includes(blogToDelete.title)) 
+})
 
 after(async () => {
   await mongoose.connection.close()
