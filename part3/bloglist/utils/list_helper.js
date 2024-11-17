@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const dummy = blogs => 1
 
@@ -95,7 +96,13 @@ const blogsInDb = async () => {
   return blogs.map(b => b.toJSON())
 }
 
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
 module.exports = {
   dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes,
-  initialBlogs, blogsInDb
+  initialBlogs, blogsInDb,
+  usersInDb
 }
