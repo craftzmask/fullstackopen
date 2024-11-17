@@ -1,4 +1,4 @@
-const { test, beforeEach, after } = require('node:test')
+const { test, beforeEach, after, describe } = require('node:test')
 const assert = require('node:assert')
 const app = require('../app')
 const supertest = require('supertest')
@@ -10,6 +10,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 let user = null
+let userRes = null
 
 beforeEach(async () => {
   await User.deleteMany({})
@@ -28,6 +29,12 @@ beforeEach(async () => {
     user.blogs.push(savedBlog._id)
     await user.save()
   }
+
+  userRes = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'root' })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
 })
 
 test('Return correct amount of blog posts', async () => {
@@ -46,108 +53,132 @@ test('each blog must have an id', async () => {
   res.body.forEach(b => assert(b.hasOwnProperty('id')))
 })
 
-test('A valid blog can be added', async () => {
-  const res = await api
-    .post('/api/login')
-    .send({ username: 'root', password: 'root' })
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('Create a blog', () => {
+  const blog = {
+    title: "Eloquent JavasSript",
+    author: "Marijn Haverbeke",
+    url: "https://eloquentjavascript.net/",
+    likes: 10
+  }
 
-  await api
-    .post('/api/blogs')
-    .set('Authorization', `Bearer ${res.body.token}`)
-    .send({
-      title: "Eloquent JavasSript",
-      author: "Marijn Haverbeke",
-      url: "https://eloquentjavascript.net/",
-      likes: 10
+  test('must login before create a blog', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await listHelper.blogsInDb()
+    assert(blogsAtEnd.length, listHelper.initialBlogs.length)
+  
+    const titles = blogsAtEnd.map(b => b.title)
+    assert(!titles.includes('Eloquent JavasSript'))
+  })
+
+  describe('A valid blog', () => {
+    test('can be added by a user', async () => {
+      userRes = await api
+        .post('/api/login')
+        .send({ username: 'root', password: 'root' })
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+    
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${userRes.body.token}`)
+        .send(blog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    
+      const blogsAtEnd = await listHelper.blogsInDb()
+      assert(blogsAtEnd.length, listHelper.initialBlogs.length + 1)
+    
+      const titles = blogsAtEnd.map(b => b.title)
+      assert(titles.includes('Eloquent JavasSript'))
     })
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-
-  const blogsAtEnd = await listHelper.blogsInDb()
-  assert(blogsAtEnd.length, listHelper.initialBlogs.length + 1)
-
-  const titles = blogsAtEnd.map(b => b.title)
-  assert(titles.includes('Eloquent JavasSript'))
-})
-
-test('likes property default to 0', async () => {
-  const res = await api.post('/api/blogs')
-    .send({
-      title: "Eloquent JavasSript",
-      author: "Marijn Haverbeke",
-      url: "https://eloquentjavascript.net/",
+  
+    test('with the likes default to 0', async () => {
+      const blogRes = await api.post('/api/blogs')
+        .send({
+          title: "Eloquent JavasSript",
+          author: "Marijn Haverbeke",
+          url: "https://eloquentjavascript.net/",
+        })
+        .set('Authorization', `Bearer ${userRes.body.token}`)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+      
+      assert.strictEqual(blogRes.body.likes, 0)
     })
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+  })
   
-  assert.strictEqual(res.body.likes, 0)
-})
-
-test('missing title cannot be added', async () => {
-  await api.post('/api/blogs')
-    .send({
-      author: "Marijn Haverbeke",
-      url: "https://eloquentjavascript.net/",
+  describe('An invalid blog when', () => {
+    test('missing title', async () => {
+      await api.post('/api/blogs')
+        .send({
+          author: "Marijn Haverbeke",
+          url: "https://eloquentjavascript.net/",
+        })
+        .set('Authorization', `Bearer ${userRes.body.token}`)
+        .expect(400)
+    
+      const blogsAtEnd = await listHelper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
     })
-    .expect(400)
-
-  const blogsAtEnd = await listHelper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
-})
-
-test('missing url cannot be added', async () => {
-  await api.post('/api/blogs')
-    .send({
-      title: "Eloquent JavasSript",
-      author: "Marijn Haverbeke",
+    
+    test('missing url', async () => {
+      await api.post('/api/blogs')
+        .send({
+          title: "Eloquent JavasSript",
+          author: "Marijn Haverbeke",
+        })
+        .set('Authorization', `Bearer ${userRes.body.token}`)
+        .expect(400)
+    
+      const blogsAtEnd = await listHelper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
     })
-    .expect(400)
-
-  const blogsAtEnd = await listHelper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
+  })
 })
 
-test('delete a blog by its author', async () => {
-  const blogsAtStart = await listHelper.blogsInDb()
-  const blogToDelete = blogsAtStart[0]
+describe('Delete a blog', () => {
+  test('is valid by its author', async () => {
+    const blogsAtStart = await listHelper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
   
-  const res = await api.post('/api/login')
-    .send({ username: 'root', password: 'root' })
-    .expect(200)
-
-  await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .set('Authorization', `Bearer ${res.body.token}`)
-    .expect(204)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${userRes.body.token}`)
+      .expect(204)
+    
+    const blogsAtEnd = await listHelper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length - 1)
   
-  const blogsAtEnd = await listHelper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length - 1)
+    const titles = blogsAtEnd.map(b => b.title)
+    assert(!titles.includes(blogToDelete.title)) 
+  })
 
-  const titles = blogsAtEnd.map(b => b.title)
-  assert(!titles.includes(blogToDelete.title)) 
+  test('is invalid by other users', async () => {
+    const blogsAtStart = await listHelper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+    
+    const res = await api.post('/api/login')
+      .send({ username: 'admin', password: 'admin' })
+      .expect(200)
+  
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${res.body.token}`)
+      .expect(401)
+    
+    const blogsAtEnd = await listHelper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
+  
+    const titles = blogsAtEnd.map(b => b.title)
+    assert(titles.includes(blogToDelete.title)) 
+  })
 })
 
-test('cannot delete other blogs', async () => {
-  const blogsAtStart = await listHelper.blogsInDb()
-  const blogToDelete = blogsAtStart[0]
-  
-  const res = await api.post('/api/login')
-    .send({ username: 'admin', password: 'admin' })
-    .expect(200)
-
-  await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .set('Authorization', `Bearer ${res.body.token}`)
-    .expect(401)
-  
-  const blogsAtEnd = await listHelper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
-
-  const titles = blogsAtEnd.map(b => b.title)
-  assert(titles.includes(blogToDelete.title)) 
-})
 
 test('update likes of the blog', async () => {
   const blogsAtStart = await listHelper.blogsInDb()
