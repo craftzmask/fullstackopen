@@ -11,15 +11,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await User.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('root', 10)
-  const user = new User({
-    username: 'root',
-    name: 'root',
-    passwordHash
-  })
-
-  await user.save()
+  await listHelper.createUser()
 })
 
 test('a valid user can create', async () => {
@@ -34,7 +26,7 @@ test('a valid user can create', async () => {
     .expect('Content-Type', /application\/json/)
 
   const usersAtEnd = await listHelper.usersInDb()
-  assert.strictEqual(usersAtEnd.length, listHelper.usersInDb.length + 1)
+  assert.strictEqual(usersAtEnd.length, 2)
 
   const usernames = usersAtEnd.map(u => u.username)
   assert(usernames.includes(res.body.username))

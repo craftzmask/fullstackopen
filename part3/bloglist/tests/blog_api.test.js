@@ -7,12 +7,18 @@ const listHelper = require('../utils/list_helper')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+let user = null
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   let blogs = listHelper.initialBlogs.map(b => new Blog(b))
   blogs = blogs.map(b => b.save())
   await Promise.all(blogs)
+
+  await User.deleteMany({})
+  user = await listHelper.createUser()
 })
 
 test('Return correct amount of blog posts', async () => {
@@ -32,12 +38,20 @@ test('each blog must have an id', async () => {
 })
 
 test('A valid blog can be added', async () => {
-  await api.post('/api/blogs')
+  const res = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'root' })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${res.body.token}`)
     .send({
       title: "Eloquent JavasSript",
       author: "Marijn Haverbeke",
       url: "https://eloquentjavascript.net/",
-      likes: 10,
+      likes: 10
     })
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -100,7 +114,7 @@ test('delete a blog', async () => {
   assert(!titles.includes(blogToDelete.title)) 
 })
 
-test.only('update likes of the blog', async () => {
+test('update likes of the blog', async () => {
   const blogsAtStart = await listHelper.blogsInDb()
   const blogToUpdate = blogsAtStart[0]
 

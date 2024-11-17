@@ -1,7 +1,7 @@
+const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 
 const Blog = require('../models/blog')
-const user = require('../models/user')
 const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res) => {
@@ -12,16 +12,25 @@ blogsRouter.get('/', async (req, res) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
-  const users = await User.find({})
+  const token = jwt.verify(req.token, process.env.SECRET)
+
+  if (!token.id) {
+    return res.status(401).json({
+      error: 'Unauthorized'
+    })
+  }
+
+  const user = await User.findById(token.id)
+
   const blog = new Blog({
     ...req.body,
-    user: users[0]._id
+    user: user._id
   })
 
   const savedBlog = await blog.save()
   
-  users[0].blogs.push(savedBlog._id)
-  await users[0].save()
+  user.blogs.push(savedBlog._id)
+  await user.save()
 
   res.status(201).json(savedBlog)
 })
