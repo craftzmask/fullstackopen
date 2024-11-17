@@ -62,6 +62,31 @@ test('likes property default to 0', async () => {
   assert.strictEqual(res.body.likes, 0)
 })
 
+test('missing title cannot be added', async () => {
+  await api.post('/api/blogs')
+    .send({
+      author: "Marijn Haverbeke",
+      url: "https://eloquentjavascript.net/",
+    })
+    .expect(400)
+
+  const blogsAtEnd = await listHelper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
+})
+
+test('missing url cannot be added', async () => {
+  await api.post('/api/blogs')
+    .send({
+      title: "Eloquent JavasSript",
+      author: "Marijn Haverbeke",
+    })
+    .expect(400)
+
+  const blogsAtEnd = await listHelper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, listHelper.initialBlogs.length)
+})
+
+
 after(async () => {
   await mongoose.connection.close()
 })
