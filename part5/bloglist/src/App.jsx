@@ -15,6 +15,8 @@ const App = () => {
   const [status, setStatus] = useState('')
   const blogFormRef = useRef()
 
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -60,6 +62,7 @@ const App = () => {
   const likeBlog = async blog => {
     try {
       const { id, ...rest } = blog
+      console.log(id, rest)
       const updatedBlog = await blogService.updateBlog(id, {
         ...rest,
         likes: rest.likes + 1,
@@ -109,7 +112,9 @@ const App = () => {
         <BlogForm onSubmit={createBlog} />
       </Togglable>
 
-      < BlogList blogs={blogs} onClick={likeBlog} />
+      < BlogList
+        blogs={sortedBlogs}
+        onClick={likeBlog} />
     </div>
   )
 }
