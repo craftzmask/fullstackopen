@@ -57,6 +57,20 @@ const App = () => {
     }
   }
 
+  const likeBlog = async blog => {
+    try {
+      const { id, ...rest } = blog
+      const updatedBlog = await blogService.updateBlog(id, {
+        ...rest,
+        likes: rest.likes + 1,
+        user: rest.user.id
+      })
+      setBlogs(blogs.map(b => b.id !== id ? b : updatedBlog))
+    } catch (err) {
+
+    }
+  }
+
   const notify = (message, status, duration=2) => {
     setMessage(message)
     setStatus(status)
@@ -95,7 +109,7 @@ const App = () => {
         <BlogForm onSubmit={createBlog} />
       </Togglable>
 
-      < BlogList blogs={blogs} />
+      < BlogList blogs={blogs} onClick={likeBlog} />
     </div>
   )
 }
