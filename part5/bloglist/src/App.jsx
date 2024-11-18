@@ -62,15 +62,27 @@ const App = () => {
   const likeBlog = async blog => {
     try {
       const { id, ...rest } = blog
-      console.log(id, rest)
       const updatedBlog = await blogService.updateBlog(id, {
         ...rest,
         likes: rest.likes + 1,
         user: rest.user.id
       })
       setBlogs(blogs.map(b => b.id !== id ? b : updatedBlog))
+      notify(`Like ${updatedBlog.title} by ${updatedBlog.author}`, 'success')
     } catch (err) {
+      notify(err.response.data.error, 'error')
+    }
+  }
 
+  const deleteBlog = async blog => {
+    if (confirm(`Remove ${blog.title} by ${blog.author}`)) {
+      try {
+        await blogService.deleteBlog(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        notify(`Deleted ${blog.title} by ${blog.author}`, 'success')
+      } catch (err) {
+        notify(err.response.data.error, 'error')
+      }
     }
   }
 
@@ -114,7 +126,9 @@ const App = () => {
 
       < BlogList
         blogs={sortedBlogs}
-        onClick={likeBlog} />
+        currentUser={user}
+        onLikeClick={likeBlog}
+        onDeleteClick={deleteBlog} />
     </div>
   )
 }
