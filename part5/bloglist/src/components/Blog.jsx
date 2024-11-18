@@ -13,7 +13,7 @@ const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
   }
 
   const detail = () => (
-    <div>
+    <div className='blog-detail'>
       <div>{blog.url}</div>
       <div>
         likes: {blog.likes}
