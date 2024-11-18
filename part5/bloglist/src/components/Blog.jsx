@@ -13,14 +13,18 @@ const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
   }
 
   const detail = () => (
-    <div className='blog-detail'>
-      <div>{blog.url}</div>
-      <div>
+    <div data-testid='blog-detail'>
+      <div data-testid='blog-url' className='blog-url'>
+        {blog.url}
+      </div>
+
+      <div data-testid='blog-likes'>
         likes: {blog.likes}
         <button onClick={() => onLikeClick(blog)}>
           like
         </button>
       </div>
+
       <div>{blog.user && blog.user.name}</div>
       {
         currentUser.username === blog.user.username &&
