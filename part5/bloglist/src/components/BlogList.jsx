@@ -1,4 +1,5 @@
 import Blog from './Blog'
+import PropTypes from 'prop-types'
 
 const BlogList = ({ blogs, currentUser, onLikeClick, onDeleteClick }) => (
   <div>
@@ -12,5 +13,12 @@ const BlogList = ({ blogs, currentUser, onLikeClick, onDeleteClick }) => (
     )}
   </div>
 )
+
+BlogList.propTypes = {
+  blogs: PropTypes.array.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  onLikeClick: PropTypes.func.isRequired,
+  onDeleteClick: PropTypes.func.isRequired
+}
 
 export default BlogList
