@@ -1,11 +1,23 @@
-const LoginForm = props => {
+import { useState } from 'react'
+
+const LoginForm = ({ onSubmit }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    await onSubmit({ username, password })
+    setUsername('')
+    setPassword('')
+  }
+
   return (
-    <form onSubmit={props.onSubmit}>
+    <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor='username'>username:</label> 
         <input
-          value={props.username}
-          onChange={props.onUsernameChange}
+          value={username}
+          onChange={e => setUsername(e.target.value)}
           name='username'
           type='text'
           id='username'
@@ -14,8 +26,8 @@ const LoginForm = props => {
       <div>
         <label htmlFor='password'>password:</label>
         <input
-          value={props.password}
-          onChange={props.onPasswordChange}
+          value={password}
+          onChange={e => setPassword(e.target.value)}
           name='password'
           type='password'
           id='password'

@@ -1,11 +1,25 @@
-const BlogForm = props => {
+import { useState } from 'react'
+
+const BlogForm = ({ onSubmit }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    await onSubmit({ title, author, url })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
   return (
-    <form onSubmit={props.onSubmit}>
+    <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor='title'>title:</label> 
         <input
-          value={props.title}
-          onChange={props.onTitleChange}
+          value={title}
+          onChange={e => setTitle(e.target.value)}
           name='title'
           type='text'
           id='title'
@@ -14,8 +28,8 @@ const BlogForm = props => {
       <div>
         <label htmlFor='author'>author:</label> 
         <input
-          value={props.author}
-          onChange={props.onAuthorChange}
+          value={author}
+          onChange={e => setAuthor(e.target.value)}
           name='author'
           type='text'
           id='author'
@@ -24,8 +38,8 @@ const BlogForm = props => {
       <div>
         <label htmlFor='url'>url:</label> 
         <input
-          value={props.url}
-          onChange={props.onUrlChange}
+          value={url}
+          onChange={e => setUrl(e.target.value)}
           name='url'
           type='text'
           id='url'

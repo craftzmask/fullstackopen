@@ -10,12 +10,7 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState('')
   const blogFormRef = useRef()
@@ -27,23 +22,20 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (user) {
-      setUser(JSON.parse(user))
+    const userJSON = localStorage.getItem('user')
+    if (userJSON) {
+      const user = JSON.parse(userJSON)
+      setUser(user)
       blogService.setToken(user.token)
     }
   }, [])
 
-  const login = async e => {
-    e.preventDefault()
-
+  const login = async credential => {
     try {
-      const user = await loginService.login(username, password)
+      const user = await loginService.login(credential)
       setUser(user)
       blogService.setToken(user.token)
       localStorage.setItem('user', JSON.stringify(user))
-      setUsername('')
-      setPassword('')
     } catch (err) {
       notify('wrong username or password', 'error')
     }
@@ -54,17 +46,11 @@ const App = () => {
     localStorage.clear()
   }
 
-  const createBlog = async e => {
-    e.preventDefault()
+  const createBlog = async newBlog => {
     try {
-      const blog = await blogService.createBlog({
-        title, author, url
-      })
+      const blog = await blogService.createBlog(newBlog)
       notify(`Added ${blog.title} by ${blog.author}`, 'success')
       setBlogs(blogs.concat(blog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       blogFormRef.current.toggleVisibility()
     } catch (err) {
       notify(err.response.data.error, 'error')
@@ -87,12 +73,7 @@ const App = () => {
         <Notification
           message={message}
           status={status} />
-        <LoginForm
-          onSubmit={login}
-          username={username}
-          onUsernameChange={e => setUsername(e.target.value)}
-          password={password}
-          onPasswordChange={e => setPassword(e.target.value)} />
+        <LoginForm onSubmit={login} />
       </div>
     )
   }
@@ -103,6 +84,7 @@ const App = () => {
       <Notification
         message={message}
         status={status} />
+
       <p>
         {user.name} logged in
         <button onClick={logout}>logout</button>
@@ -110,14 +92,7 @@ const App = () => {
 
       <h2>create new</h2>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm
-          onSubmit={createBlog}
-          title={title}
-          onTitleChange={e => setTitle(e.target.value)}
-          author={author}
-          onAuthorChange={e => setAuthor(e.target.value)}
-          url={url}
-          onUrlChange={e => setUrl(e.target.value)} />
+        <BlogForm onSubmit={createBlog} />
       </Togglable>
 
       < BlogList blogs={blogs} />
