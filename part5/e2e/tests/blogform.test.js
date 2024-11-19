@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { login, createBlog } = require('../helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -24,18 +25,14 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByTestId('username').fill('root')
-      await page.getByTestId('password').fill('root')
-      await page.getByRole('button').click()
+      await login(page, 'root', 'root')
 
       const element = await page.getByText('Johnny Huynh logged in')
       await expect(element).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.getByTestId('username').fill('root')
-      await page.getByTestId('password').fill('wrong')
-      await page.getByRole('button').click()
+      await login(page, 'root', 'wrong')
 
       const element = await page.getByText('Johnny Huynh logged in')
       await expect(element).not.toBeVisible()
@@ -44,22 +41,27 @@ describe('Blog app', () => {
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByTestId('username').fill('root')
-      await page.getByTestId('password').fill('root')
-      await page.getByRole('button').click()
+      await login(page, 'root', 'root')
     })
 
     test('a new blog can be created', async ({ page }) => {
-      await page.getByRole('button', { name: 'new blog' }).click()
-
-      await page.getByTestId('title').fill('React Patterns')
-      await page.getByTestId('author').fill('Micheal Chan')
-      await page.getByTestId('url').fill('https://reactpatterns.com')
-      await page.getByRole('button', { name: 'create' }).click()
-
-      await page.getByText('React Patterns Micheal Chan').waitFor()
+      await createBlog(page, 'React Patterns', 'Micheal Chan', 'https://reactpatterns.com')
 
       const element = await page.getByText('React Patterns Micheal Chan')
+      expect(element).toBeVisible()
+    })
+
+    test('a blog can be liked', async ({ page }) => {
+      await createBlog(page, 'React Patterns', 'Micheal Chan', 'https://reactpatterns.com')
+
+      await page.getByRole('button', { name: 'view' }).click()
+      let element = await page.getByText('likes: 0')
+      expect(element).toBeVisible()
+
+      await page.getByRole('button', { name: 'like' }).click()
+      await page.getByText('likes: 1').waitFor()
+      
+      element = await page.getByText('likes: 1')
       expect(element).toBeVisible()
     })
   })
