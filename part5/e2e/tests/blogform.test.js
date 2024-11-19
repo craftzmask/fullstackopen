@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'root'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'Micheal Je',
+        username: 'admin',
+        password: 'admin'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -82,6 +89,18 @@ describe('Blog app', () => {
 
       const element = await page.getByText('React Patterns Micheal Chan')
       expect(element).not.toBeVisible()
+    })
+
+    test('only the author can see his blogs', async ({ page }) => {
+      await createBlog(page, 'React Patterns', 'Micheal Chan', 'https://reactpatterns.com')
+
+      await page.getByRole('button', { name: 'logout' }).click()
+
+      await login(page, 'admin', 'admin')
+
+      await page.getByRole('button', { name: 'view' }).click()
+
+      await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
     })
   })
 })
