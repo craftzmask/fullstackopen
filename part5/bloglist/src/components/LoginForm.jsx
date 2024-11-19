@@ -22,6 +22,7 @@ const LoginForm = ({ onSubmit }) => {
           name='username'
           type='text'
           id='username'
+          data-testid='username'
         />
       </div>
       <div>
@@ -32,6 +33,7 @@ const LoginForm = ({ onSubmit }) => {
           name='password'
           type='password'
           id='password'
+          data-testid='password'
         />
       </div>
       <button type='submit'>login</button>
