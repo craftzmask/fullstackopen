@@ -64,5 +64,24 @@ describe('Blog app', () => {
       element = await page.getByText('likes: 1')
       expect(element).toBeVisible()
     })
+
+    test('the blog can be deleted by its author', async ({ page }) => {
+      await createBlog(page, 'React Patterns', 'Micheal Chan', 'https://reactpatterns.com')
+      
+      await page.getByRole('button', { name: 'view' }).click()
+
+      page.on('dialog', async dialog => {
+        console.log(dialog.message())
+        await dialog.accept()
+      });
+
+      page.getByRole('button', { name: 'delete' }).waitFor()
+      await page.getByRole('button', { name: 'delete' }).click()
+
+      await page.waitForTimeout(1000)
+
+      const element = await page.getByText('React Patterns Micheal Chan')
+      expect(element).not.toBeVisible()
+    })
   })
 })
