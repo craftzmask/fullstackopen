@@ -102,5 +102,33 @@ describe('Blog app', () => {
 
       await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
     })
+
+
+    test.only('blogs are sorted by their likes', async ({ page }) => {
+      await createBlog(page, 'React Patterns', 'Micheal Chan', 'https://reactpatterns.com')
+      await createBlog(page, 'Hello World', 'Johnny Chen', 'https://helloworld.com')
+      
+      await page
+        .getByText('Hello World Johnny Chen')
+        .getByRole('button', { name: 'view' })
+        .click()
+
+      await page.getByRole('button', { name: 'like' }).click()
+      await page.waitForTimeout(100)
+      await page.getByRole('button', { name: 'hide' }).click()
+
+      await page
+        .getByText('React Patterns Micheal Chan')
+        .getByRole('button', { name: 'view' })
+        .click()
+      
+      await page.getByRole('button', { name: 'like' }).click()
+      await page.waitForTimeout(100)
+      await page.getByRole('button', { name: 'like' }).click()
+      await page.waitForTimeout(100)
+      await page.getByRole('button', { name: 'hide' }).click()
+
+      await expect(page.getByRole('button', { name: 'view' }).first().locator('..')).toHaveText('React Patterns Micheal Chanview')
+    })
   })
 })
