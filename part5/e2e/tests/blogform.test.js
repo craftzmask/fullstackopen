@@ -41,4 +41,26 @@ describe('Blog app', () => {
       await expect(element).not.toBeVisible()
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByTestId('username').fill('root')
+      await page.getByTestId('password').fill('root')
+      await page.getByRole('button').click()
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await page.getByRole('button', { name: 'new blog' }).click()
+
+      await page.getByTestId('title').fill('React Patterns')
+      await page.getByTestId('author').fill('Micheal Chan')
+      await page.getByTestId('url').fill('https://reactpatterns.com')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      await page.getByText('React Patterns Micheal Chan').waitFor()
+
+      const element = await page.getByText('React Patterns Micheal Chan')
+      expect(element).toBeVisible()
+    })
+  })
 })

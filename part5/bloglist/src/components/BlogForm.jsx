@@ -24,6 +24,7 @@ const BlogForm = ({ onSubmit }) => {
           name='title'
           type='text'
           id='title'
+          data-testid='title'
         />
       </div>
       <div>
@@ -34,6 +35,7 @@ const BlogForm = ({ onSubmit }) => {
           name='author'
           type='text'
           id='author'
+          data-testid='author'
         />
       </div>
       <div>
@@ -44,6 +46,7 @@ const BlogForm = ({ onSubmit }) => {
           name='url'
           type='text'
           id='url'
+          data-testid='url'
         />
       </div>
       <button type='submit'>create</button>
