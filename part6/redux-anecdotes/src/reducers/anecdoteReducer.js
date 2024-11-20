@@ -32,6 +32,8 @@ const reducer = (state = initialState, action) => {
         a.id !== id ? a : votedAnecdote
       )
     }
+    case 'ADD':
+      return state.concat(asObject(action.payload.content))
     default:
       return state
   }
