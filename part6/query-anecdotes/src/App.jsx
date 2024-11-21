@@ -4,8 +4,11 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
 import { getAnecdotes, udpateAnecdote } from '../requests'
+import { useNotificationDispatch } from './NotificationContext'
 
 const App = () => {
+  const notificationDispatch = useNotificationDispatch()
+
   const result = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAnecdotes,
@@ -22,6 +25,13 @@ const App = () => {
         ['anecdotes'], 
         anecdotes.map(a => a.id !== id ? a : updatedAnecdote)
       )
+      notificationDispatch({
+        type: 'SET',
+        payload: `Voted ${updatedAnecdote.content}`
+      })
+      setTimeout(() => {
+        notificationDispatch({ type: 'CLEAR' })
+      }, 5000)
     }
   })
 
