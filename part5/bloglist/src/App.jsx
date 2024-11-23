@@ -1,4 +1,6 @@
 import { useEffect } from 'react'
+import { Route, Routes, useMatch } from 'react-router-dom'
+
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
 
@@ -8,16 +10,22 @@ import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/usersReducer'
 import { logout, setUser } from './reducers/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import UserList from './components/UserList'
+import User from './components/User'
 
 const App = () => {
-  const user = useSelector((state) => state.user)
+  const currentUser = useSelector((state) => state.user)
+  const users = useSelector((state) => state.users)
   const dispatch = useDispatch()
+  const match = useMatch('/users/:id')
+  const user = match ? users.find((u) => u.id === match.params.id) : null
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   useEffect(() => {
@@ -29,7 +37,7 @@ const App = () => {
     }
   }, [dispatch])
 
-  if (user === null) {
+  if (currentUser === null) {
     return (
       <div>
         <h2>Login</h2>
@@ -45,16 +53,18 @@ const App = () => {
       <Notification />
 
       <p>
-        {user.name} logged in
+        {currentUser.name} logged in
         <button onClick={() => dispatch(logout())}>logout</button>
       </p>
 
       <h2>create new</h2>
       <BlogForm />
 
-      <BlogList />
-
-      <UserList />
+      <Routes>
+        <Route path='/' element={<BlogList />} />
+        <Route path='/users' element={<UserList />} />
+        <Route path='/users/:id' element={<User user={user} />} />
+      </Routes>
     </div>
   )
 }

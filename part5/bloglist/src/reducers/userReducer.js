@@ -4,11 +4,10 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 
 const userSlicer = createSlice({
-  name: 'users',
+  name: 'user',
   initialState: null,
   reducers: {
     setUser(state, action) {
-      console.log(state, action)
       return action.payload
     },
   },

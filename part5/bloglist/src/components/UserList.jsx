@@ -1,12 +1,7 @@
-import { useEffect, useState } from 'react'
-import usersService from '../services/users'
+import { useSelector } from 'react-redux'
 
 const UserList = () => {
-  const [users, setUsers] = useState([])
-
-  useEffect(() => {
-    usersService.getAll().then((data) => setUsers(data))
-  }, [])
+  const users = useSelector((state) => state.users)
 
   return (
     <div>
