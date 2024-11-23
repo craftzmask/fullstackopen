@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
 
-const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
+
+const Blog = ({ blog, currentUser }) => {
   const [showDetail, setShowDetail] = useState(false)
+  const dispatch = useDispatch()
 
   const blogStyle = {
     paddingTop: 10,
@@ -20,12 +24,12 @@ const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
 
       <div data-testid='blog-likes'>
         likes: {blog.likes}
-        <button onClick={() => onLikeClick(blog)}>like</button>
+        <button onClick={() => dispatch(likeBlog(blog))}>like</button>
       </div>
 
       <div>{blog.user && blog.user.name}</div>
       {currentUser.username === blog.user.username && (
-        <button onClick={() => onDeleteClick(blog)}>delete</button>
+        <button onClick={() => dispatch(deleteBlog(blog))}>delete</button>
       )}
     </div>
   )
@@ -46,8 +50,6 @@ const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
-  onLikeClick: PropTypes.func.isRequired,
-  onDeleteClick: PropTypes.func.isRequired,
 }
 
 export default Blog

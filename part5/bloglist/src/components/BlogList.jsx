@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import Blog from './Blog'
 import PropTypes from 'prop-types'
 
-const BlogList = ({ currentUser, onLikeClick, onDeleteClick }) => {
+const BlogList = ({ currentUser }) => {
   const blogs = useSelector((state) => state.blogs)
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
@@ -10,13 +10,7 @@ const BlogList = ({ currentUser, onLikeClick, onDeleteClick }) => {
   return (
     <div>
       {sortedBlogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          currentUser={currentUser}
-          onLikeClick={onLikeClick}
-          onDeleteClick={onDeleteClick}
-        />
+        <Blog key={blog.id} blog={blog} currentUser={currentUser} />
       ))}
     </div>
   )
@@ -24,8 +18,6 @@ const BlogList = ({ currentUser, onLikeClick, onDeleteClick }) => {
 
 BlogList.propTypes = {
   currentUser: PropTypes.object.isRequired,
-  onLikeClick: PropTypes.func.isRequired,
-  onDeleteClick: PropTypes.func.isRequired,
 }
 
 export default BlogList

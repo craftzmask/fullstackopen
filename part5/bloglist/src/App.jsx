@@ -7,7 +7,6 @@ import blogService from './services/blogs'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 
-import { notify } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/blogReducer'
 import { logout, setUser } from './reducers/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
@@ -28,33 +27,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [dispatch])
-
-  const likeBlog = async (blog) => {
-    try {
-      const { id, ...rest } = blog
-      const updatedBlog = await blogService.updateBlog(id, {
-        ...rest,
-        likes: rest.likes + 1,
-        user: rest.user.id,
-      })
-      dispatch(
-        notify(`Like ${updatedBlog.title} by ${updatedBlog.author}`, 'success')
-      )
-    } catch (err) {
-      dispatch(notify(err.response.data.error, 'error'))
-    }
-  }
-
-  const deleteBlog = async (blog) => {
-    if (confirm(`Remove ${blog.title} by ${blog.author}`)) {
-      try {
-        await blogService.deleteBlog(blog.id)
-        dispatch(notify(`Deleted ${blog.title} by ${blog.author}`, 'success'))
-      } catch (err) {
-        dispatch(notify(err.response.data.error, 'error'))
-      }
-    }
-  }
 
   if (user === null) {
     return (
@@ -79,11 +51,7 @@ const App = () => {
       <h2>create new</h2>
       <BlogForm />
 
-      <BlogList
-        currentUser={user}
-        onLikeClick={likeBlog}
-        onDeleteClick={deleteBlog}
-      />
+      <BlogList currentUser={user} />
     </div>
   )
 }
