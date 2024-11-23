@@ -51,7 +51,7 @@ const App = () => {
       <h2>create new</h2>
       <BlogForm />
 
-      <BlogList currentUser={user} />
+      <BlogList />
     </div>
   )
 }
