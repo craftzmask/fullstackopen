@@ -10,6 +10,7 @@ import Notification from './components/Notification'
 import { initializeBlogs } from './reducers/blogReducer'
 import { logout, setUser } from './reducers/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
+import UserList from './components/UserList'
 
 const App = () => {
   const user = useSelector((state) => state.user)
@@ -52,6 +53,8 @@ const App = () => {
       <BlogForm />
 
       <BlogList />
+
+      <UserList />
     </div>
   )
 }
