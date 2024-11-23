@@ -9,7 +9,7 @@ const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const detail = () => (
@@ -20,18 +20,13 @@ const Blog = ({ blog, currentUser, onLikeClick, onDeleteClick }) => {
 
       <div data-testid='blog-likes'>
         likes: {blog.likes}
-        <button onClick={() => onLikeClick(blog)}>
-          like
-        </button>
+        <button onClick={() => onLikeClick(blog)}>like</button>
       </div>
 
       <div>{blog.user && blog.user.name}</div>
-      {
-        currentUser.username === blog.user.username &&
-        <button onClick={() => onDeleteClick(blog)}>
-          delete
-        </button>
-      }
+      {currentUser.username === blog.user.username && (
+        <button onClick={() => onDeleteClick(blog)}>delete</button>
+      )}
     </div>
   )
 
@@ -52,7 +47,7 @@ Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   onLikeClick: PropTypes.func.isRequired,
-  onDeleteClick: PropTypes.func.isRequired
+  onDeleteClick: PropTypes.func.isRequired,
 }
 
 export default Blog

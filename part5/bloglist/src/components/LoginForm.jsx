@@ -5,7 +5,7 @@ const LoginForm = ({ onSubmit }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     await onSubmit({ username, password })
     setUsername('')
@@ -18,7 +18,7 @@ const LoginForm = ({ onSubmit }) => {
         <label htmlFor='username'>username:</label>
         <input
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
           name='username'
           type='text'
           id='username'
@@ -29,7 +29,7 @@ const LoginForm = ({ onSubmit }) => {
         <label htmlFor='password'>password:</label>
         <input
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           name='password'
           type='password'
           id='password'
@@ -42,7 +42,7 @@ const LoginForm = ({ onSubmit }) => {
 }
 
 LoginForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default LoginForm

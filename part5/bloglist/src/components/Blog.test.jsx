@@ -10,7 +10,7 @@ beforeEach(() => {
   const user = {
     username: 'jonnyhuynh',
     name: 'Johnny Huynh',
-    id: '123123123123123'
+    id: '123123123123123',
   }
 
   const blog = {
@@ -18,15 +18,13 @@ beforeEach(() => {
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 7,
-    user
+    user,
   }
 
   mockHandler = vi.fn()
 
-  container = render(<Blog
-    blog={blog}
-    currentUser={user}
-    onLikeClick={mockHandler} />
+  container = render(
+    <Blog blog={blog} currentUser={user} onLikeClick={mockHandler} />
   ).container
 })
 

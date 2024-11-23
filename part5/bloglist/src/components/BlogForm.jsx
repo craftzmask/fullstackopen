@@ -6,7 +6,7 @@ const BlogForm = ({ onSubmit }) => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     await onSubmit({ title, author, url })
     setTitle('')
@@ -20,7 +20,7 @@ const BlogForm = ({ onSubmit }) => {
         <label htmlFor='title'>title:</label>
         <input
           value={title}
-          onChange={e => setTitle(e.target.value)}
+          onChange={(e) => setTitle(e.target.value)}
           name='title'
           type='text'
           id='title'
@@ -31,7 +31,7 @@ const BlogForm = ({ onSubmit }) => {
         <label htmlFor='author'>author:</label>
         <input
           value={author}
-          onChange={e => setAuthor(e.target.value)}
+          onChange={(e) => setAuthor(e.target.value)}
           name='author'
           type='text'
           id='author'
@@ -42,7 +42,7 @@ const BlogForm = ({ onSubmit }) => {
         <label htmlFor='url'>url:</label>
         <input
           value={url}
-          onChange={e => setUrl(e.target.value)}
+          onChange={(e) => setUrl(e.target.value)}
           name='url'
           type='text'
           id='url'
@@ -55,7 +55,7 @@ const BlogForm = ({ onSubmit }) => {
 }
 
 BlogForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default BlogForm

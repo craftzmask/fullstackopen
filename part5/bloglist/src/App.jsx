@@ -18,9 +18,7 @@ const App = () => {
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -32,7 +30,7 @@ const App = () => {
     }
   }, [])
 
-  const login = async credential => {
+  const login = async (credential) => {
     try {
       const user = await loginService.login(credential)
       setUser(user)
@@ -48,7 +46,7 @@ const App = () => {
     localStorage.clear()
   }
 
-  const createBlog = async newBlog => {
+  const createBlog = async (newBlog) => {
     try {
       const blog = await blogService.createBlog(newBlog)
       notify(`Added ${blog.title} by ${blog.author}`, 'success')
@@ -59,26 +57,26 @@ const App = () => {
     }
   }
 
-  const likeBlog = async blog => {
+  const likeBlog = async (blog) => {
     try {
       const { id, ...rest } = blog
       const updatedBlog = await blogService.updateBlog(id, {
         ...rest,
         likes: rest.likes + 1,
-        user: rest.user.id
+        user: rest.user.id,
       })
-      setBlogs(blogs.map(b => b.id !== id ? b : updatedBlog))
+      setBlogs(blogs.map((b) => (b.id !== id ? b : updatedBlog)))
       notify(`Like ${updatedBlog.title} by ${updatedBlog.author}`, 'success')
     } catch (err) {
       notify(err.response.data.error, 'error')
     }
   }
 
-  const deleteBlog = async blog => {
+  const deleteBlog = async (blog) => {
     if (confirm(`Remove ${blog.title} by ${blog.author}`)) {
       try {
         await blogService.deleteBlog(blog.id)
-        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setBlogs(blogs.filter((b) => b.id !== blog.id))
         notify(`Deleted ${blog.title} by ${blog.author}`, 'success')
       } catch (err) {
         notify(err.response.data.error, 'error')
@@ -86,7 +84,7 @@ const App = () => {
     }
   }
 
-  const notify = (message, status, duration=2) => {
+  const notify = (message, status, duration = 2) => {
     setMessage(message)
     setStatus(status)
     setTimeout(() => {
@@ -99,9 +97,7 @@ const App = () => {
     return (
       <div>
         <h2>Login</h2>
-        <Notification
-          message={message}
-          status={status} />
+        <Notification message={message} status={status} />
         <LoginForm onSubmit={login} />
       </div>
     )
@@ -110,9 +106,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification
-        message={message}
-        status={status} />
+      <Notification message={message} status={status} />
 
       <p>
         {user.name} logged in
@@ -124,11 +118,12 @@ const App = () => {
         <BlogForm onSubmit={createBlog} />
       </Togglable>
 
-      < BlogList
+      <BlogList
         blogs={sortedBlogs}
         currentUser={user}
         onLikeClick={likeBlog}
-        onDeleteClick={deleteBlog} />
+        onDeleteClick={deleteBlog}
+      />
     </div>
   )
 }
