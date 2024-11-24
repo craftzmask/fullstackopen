@@ -1,10 +1,10 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({})
-    .populate('user', { username: 1, name: 1 })
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
 
   res.json(blogs)
 })
@@ -14,12 +14,12 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
 
   const blog = new Blog({
     ...req.body,
-    user: user._id
+    user: user._id,
   })
 
   let savedBlog = await blog.save()
   savedBlog = await savedBlog.populate('user')
-  
+
   user.blogs.push(savedBlog._id)
   await user.save()
 
@@ -27,9 +27,9 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
 })
 
 blogsRouter.put('/:id', async (req, res) => {
-  const blog = await Blog
-    .findByIdAndUpdate(req.params.id, req.body, { new: true })
-    .populate('user', { username: 1, name: 1 })
+  const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  }).populate('user', { username: 1, name: 1 })
 
   res.json(blog)
 })
@@ -40,12 +40,27 @@ blogsRouter.delete('/:id', userExtractor, async (req, res) => {
   const blog = await Blog.findById(req.params.id)
   if (blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndDelete(req.params.id)
-    user.blogs = user.blogs.filter(blogId => blogId.toString() !== req.params.id)
+    user.blogs = user.blogs.filter(
+      (blogId) => blogId.toString() !== req.params.id
+    )
     await user.save()
     return res.status(204).end()
   }
 
   res.status(401).json({ error: 'Unauthorized' })
+})
+
+blogsRouter.post('/:id/comments', async (req, res) => {
+  const blog = await Blog.findById(req.params.id)
+  const comment = new Comment({
+    ...req.body,
+    blog: blog._id,
+  })
+  const savedComment = await comment.save()
+  blog.comments.push(savedComment)
+  await blog.save()
+
+  res.status(201).json(savedComment)
 })
 
 module.exports = blogsRouter
