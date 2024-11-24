@@ -1,27 +1,24 @@
 import { useEffect } from 'react'
-import { Route, Routes, useMatch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
-
-import blogService from './services/blogs'
-
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import UserList from './components/UserList'
+import User from './components/User'
+import Blog from './components/Blog'
+
+import blogService from './services/blogs'
 
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { logout, setUser } from './reducers/userReducer'
-import { useDispatch, useSelector } from 'react-redux'
-import UserList from './components/UserList'
-import User from './components/User'
 
 const App = () => {
   const currentUser = useSelector((state) => state.user)
-  const users = useSelector((state) => state.users)
   const dispatch = useDispatch()
-  const match = useMatch('/users/:id')
-  const user = match ? users.find((u) => u.id === match.params.id) : null
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -62,8 +59,9 @@ const App = () => {
 
       <Routes>
         <Route path='/' element={<BlogList />} />
+        <Route path='/blogs/:id' element={<Blog />} />
         <Route path='/users' element={<UserList />} />
-        <Route path='/users/:id' element={<User user={user} />} />
+        <Route path='/users/:id' element={<User />} />
       </Routes>
     </div>
   )
