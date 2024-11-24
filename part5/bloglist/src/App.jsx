@@ -15,6 +15,7 @@ import blogService from './services/blogs'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { logout, setUser } from './reducers/userReducer'
+import Menu from './components/Menu'
 
 const App = () => {
   const currentUser = useSelector((state) => state.user)
@@ -49,10 +50,7 @@ const App = () => {
       <h2>blogs</h2>
       <Notification />
 
-      <p>
-        {currentUser.name} logged in
-        <button onClick={() => dispatch(logout())}>logout</button>
-      </p>
+      <Menu />
 
       <h2>create new</h2>
       <BlogForm />
