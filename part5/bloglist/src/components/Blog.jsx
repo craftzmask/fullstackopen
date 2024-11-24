@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
-
-import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 import { useMatch } from 'react-router-dom'
+
+import { likeBlog, deleteBlog, postComment } from '../reducers/blogReducer'
+
+import CommentForm from './CommentForm'
+import CommentList from './CommentList'
 
 const Blog = () => {
   const user = useSelector((state) => state.user)
@@ -18,6 +21,10 @@ const Blog = () => {
 
   const remove = (blog) => {
     dispatch(deleteBlog(blog))
+  }
+
+  const comment = (content) => {
+    dispatch(postComment(blog, content))
   }
 
   if (!blog) return null
@@ -38,6 +45,11 @@ const Blog = () => {
       {user?.username === blog.user.username && (
         <button onClick={() => remove(blog)}>delete</button>
       )}
+
+      <h3>comments</h3>
+      <CommentForm onSubmit={comment} />
+
+      <CommentList comments={blog.comments} />
     </div>
   )
 }
