@@ -22,19 +22,26 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    
     const found = persons.find(p => p.name === newName)
     if (found) {
-      alert(`${newName} is already added to phonebook`)
-      return
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personService.update({ ...found, number: newNumber })
+          .then(data => {
+            setPersons(persons.map(p => p.id !== data.id ? p : data))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+    } else {
+      const personObject = { name: newName, number: newNumber }
+      personService.create(personObject)
+        .then(data => {
+          setPersons(persons.concat(data))
+          setNewName('')
+          setNewNumber('')
+        })
     }
-
-    const personObject = { name: newName, number: newNumber }
-    personService.create(personObject)
-      .then(data => {
-        setPersons(persons.concat(data))
-        setNewName('')
-        setNewNumber('')
-      })
   }
 
   const handleDeleteClick = (person) => {

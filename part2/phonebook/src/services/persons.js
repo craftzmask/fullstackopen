@@ -10,8 +10,13 @@ const create = (object) => {
   return axios.post(baseUrl, object).then(res => res.data)
 }
 
+const update = (object) => {
+  return axios.put(`${baseUrl}/${object.id}`, object)
+    .then(res => res.data)
+}
+
 const remove = (object) => {
   return axios.delete(`${baseUrl}/${object.id}`)
 }
 
-export default { getAll, create, remove }
+export default { getAll, create, update, remove }
