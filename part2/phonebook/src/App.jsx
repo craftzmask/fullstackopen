@@ -24,6 +24,11 @@ const App = () => {
     return name.includes(keySearch.toLowerCase())
   })
 
+  const resetForm = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     
@@ -33,9 +38,13 @@ const App = () => {
         personService.update({ ...found, number: newNumber })
           .then(data => {
             setPersons(persons.map(p => p.id !== data.id ? p : data))
-            setNewName('')
-            setNewNumber('')
+            resetForm()
             notify(`Added ${data.name}'s number`, 'success')
+          })
+          .catch(() => {
+            setPersons(persons.filter(p => p.id !== found.id))
+            resetForm()
+            notify(`Information of ${found.name} has been removed from server`, 'error')
           })
       }
     } else {
@@ -43,8 +52,7 @@ const App = () => {
       personService.create(personObject)
         .then(data => {
           setPersons(persons.concat(data))
-          setNewName('')
-          setNewNumber('')
+          resetForm()
           notify(`Added ${data.name}`, 'success')
         })
     }
