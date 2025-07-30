@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import PersonList from './components/PersonList'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [keySearch, setKeySearch] = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState('')
+  const timeoutIdRef = useRef(null)
   
   useEffect(() => {
     personService.getAll()
@@ -31,6 +35,7 @@ const App = () => {
             setPersons(persons.map(p => p.id !== data.id ? p : data))
             setNewName('')
             setNewNumber('')
+            notify(`Added ${data.name}'s number`, 'success')
           })
       }
     } else {
@@ -40,6 +45,7 @@ const App = () => {
           setPersons(persons.concat(data))
           setNewName('')
           setNewNumber('')
+          notify(`Added ${data.name}`, 'success')
         })
     }
   }
@@ -49,13 +55,33 @@ const App = () => {
       personService.remove(person)
         .then(() => {
           setPersons(persons.filter(p => p.id !== person.id))
+          notify(`Deleted ${person.name}`, 'success')
         })
     }
+  }
+
+  const notify = (message, status) => {
+    setMessage(message)
+    setStatus(status)
+
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+    }
+
+    timeoutIdRef.current = setTimeout(() => {
+      setMessage('')
+      setStatus('')
+    }, 5000)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={message}
+        status={status}
+      />
+
       <Filter
         value={keySearch}
         onChange={(e) => setKeySearch(e.target.value)}
