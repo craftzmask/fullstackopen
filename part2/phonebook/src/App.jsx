@@ -28,11 +28,14 @@ const App = () => {
       return
     }
 
-    setPersons(persons.concat({
-      name: newName, number: newNumber
-    }))
-    setNewName('')
-    setNewNumber('')
+    const personObject = { name: newName, number: newNumber }
+    axios
+      .post("http://localhost:3001/persons", personObject)
+      .then(res => {
+        setPersons(persons.concat(res.data))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   return (
