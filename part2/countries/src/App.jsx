@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import countryService from './services/countries.js'
 import Filter from './components/Filter'
 import CountryList from './components/CountryList'
 
@@ -14,9 +14,8 @@ function App() {
   })
 
   useEffect(() => {
-    axios
-      .get('https://studies.cs.helsinki.fi/restcountries/api/all')
-      .then(res => setCountries(res.data))
+    countryService.getAll()
+      .then(data => setCountries(data))
   }, [])
 
   const handleShowClick = (countryName) => {
