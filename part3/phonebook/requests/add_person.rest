@@ -5,3 +5,19 @@ Content-Type: application/json
   "name": "Rannie",
   "number": "123-45678990"
 }
+
+###
+post http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Rannie"
+}
+
+###
+post http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "number": "123-45678990"
+}

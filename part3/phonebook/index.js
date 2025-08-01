@@ -42,6 +42,18 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const person = req.body
+  if (!(person.name && person.number)) {
+    return res.status(400).json({
+      error: 'name or number is missing'
+    })
+  }
+
+  if (persons.find(p => p.name === person.name)) {
+    return res.status(400).json({
+      error: 'name is already taken'
+    })
+  }
+  
   person.id = Math.floor(Math.random() * 1000000).toString()
   persons.push(person)
   res.json(person)
