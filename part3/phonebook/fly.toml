@@ -1,0 +1,25 @@
+# fly.toml app configuration file generated for phonebook-young-waterfall-6163 on 2025-08-02T00:19:34-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'phonebook-young-waterfall-6163'
+primary_region = 'sjc'
+
+[env]
+  PORT = "3001"
+
+[build]
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
