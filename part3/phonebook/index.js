@@ -38,10 +38,11 @@ app.post('/api/persons', (req, res) => {
   person.save().then(data => res.json(person))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person
     .findByIdAndDelete(req.params.id)
     .then(() => res.status(204).end())
+    .catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
@@ -53,6 +54,26 @@ app.get('/info', (req, res) => {
   )
 })
 
+const unknownRoute = (req, res) => {
+  return res.status(404).json({
+    error: 'unknown route'
+  })
+}
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error)
+
+  if (error.name === 'CastError') {
+    return res.status(400).json({
+      error: 'malformatted id'
+    })
+  }
+
+  next(error)
+}
+
+app.use(unknownRoute)
+app.use(errorHandler)
 
 const PORT = 3001
 app.listen(PORT, () => {
