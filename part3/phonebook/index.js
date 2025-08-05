@@ -38,6 +38,16 @@ app.post('/api/persons', (req, res) => {
   person.save().then(data => res.json(person))
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndUpdate(
+    req.params.id,
+    { ...req.body },
+    { new: true }
+  )
+  .then(data => res.json(data))
+  .catch(error => next(error))
+})
+
 app.delete('/api/persons/:id', (req, res, next) => {
   Person
     .findByIdAndDelete(req.params.id)
