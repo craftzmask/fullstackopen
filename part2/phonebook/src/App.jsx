@@ -55,6 +55,9 @@ const App = () => {
           resetForm()
           notify(`Added ${data.name}`, 'success')
         })
+        .catch(error => {
+          notify(error.response.data.error, 'error')
+        })
     }
   }
 
