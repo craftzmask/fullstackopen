@@ -10,6 +10,7 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
+// eslint-disable-next-line no-unused-vars
 morgan.token('body', (req, res) => JSON.stringify(req.body))
 
 app.get('/api/persons', (req, res) => {
@@ -41,7 +42,6 @@ app.post('/api/persons', (req, res, next) => {
   person.save()
     .then(data => res.json(data))
     .catch(error => next(error))
-  
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -50,8 +50,8 @@ app.put('/api/persons/:id', (req, res, next) => {
     { ...req.body },
     { new: true }
   )
-  .then(data => res.json(data))
-  .catch(error => next(error))
+    .then(data => res.json(data))
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
