@@ -4,6 +4,17 @@ const totalLike = (blogs) => {
   return blogs.reduce((likes, blog) => likes + blog.likes, 0)
 }
 
+const favoriteBlog = (blogs) => {
+  let favBlog = null
+  for (const blog of blogs) {
+    if (favBlog === null || favBlog.likes < blog.likes) {
+      favBlog = blog
+    }
+  }
+
+  return favBlog
+}
+
 const blogs = [
   {
     _id: "5a422a851b54a676234d17f7",
@@ -55,4 +66,9 @@ const blogs = [
   }  
 ]
 
-module.exports = { dummy, totalLike, blogs }
+module.exports = {
+  dummy, 
+  totalLike, 
+  favoriteBlog,
+  blogs 
+}
