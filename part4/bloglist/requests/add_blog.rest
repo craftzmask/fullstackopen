@@ -1,0 +1,9 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Tee Pot",
+  "author": "Michael Chan",
+  "url": "https://reactpatterns.com/",
+  "likes": 7
+}

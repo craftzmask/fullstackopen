@@ -11,7 +11,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'The password cannot be empty'],
   },
-  name: String
+  name: String,
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
