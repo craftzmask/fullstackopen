@@ -51,6 +51,20 @@ test('a valid blog can be added', async () => {
   assert.strictEqual(blogs.map(b => b.title).includes('Atomic CSS Modules'), true)
 })
 
+test.only('likes default to 0 if missing', async () => {
+  const res = await api.post(blogURI)
+    .send({
+      title: 'Atomic CSS Modules',
+      author: 'Michele Bertoli',
+      url: 'https://medium.com/@michelebertoli'
+    })
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  assert.strictEqual(res.body.hasOwnProperty('likes'), true)
+  assert.strictEqual(res.body.likes, 0)
+})
+
 after(() => {
   mongoose.connection.close()
 })
