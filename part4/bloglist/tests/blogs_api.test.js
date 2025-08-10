@@ -65,7 +65,7 @@ test('likes default to 0 if missing', async () => {
   assert.strictEqual(res.body.likes, 0)
 })
 
-test.only('cannot add without name or url', async () => {
+test('cannot add without name or url', async () => {
   await api.post(blogURI)
     .send({
       author: 'Michele Bertoli',
@@ -82,6 +82,20 @@ test.only('cannot add without name or url', async () => {
   
   const blogs = await listHelper.blogsInDb()
   assert.strictEqual(blogs.length, listHelper.blogs.length)
+})
+
+test.only('delete a valid blog', async () => {
+  const blogsAtStart = await listHelper.blogsInDb()
+
+  await api
+    .delete(`${blogURI}/${blogsAtStart[0].id}`)
+    .expect(204)
+  
+  const blogsAtEnd = await listHelper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+
+  const titles = blogsAtEnd.map(b => b.title)
+  assert.strictEqual(titles.includes(blogsAtStart[0].title), false)
 })
 
 
