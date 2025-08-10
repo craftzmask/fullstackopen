@@ -6,6 +6,7 @@ const app = require('../app')
 
 const Blog = require('../models/blog')
 const listHelper = require('../utils/list_helper')
+const blog = require('../models/blog')
 
 const api = supertest(app)
 
@@ -24,7 +25,7 @@ test('return correct number of blogs', async () => {
   assert.strictEqual(listHelper.blogs.length, res.body.length)
 })
 
-test.only('each blog has its own id', async () => {
+test('each blog has its own id', async () => {
   const res = await api.get(blogURI)
     .expect(200)
     .expect('Content-Type', /application\/json/)
@@ -32,6 +33,22 @@ test.only('each blog has its own id', async () => {
   res.body.forEach(blog =>
     assert.strictEqual(blog.hasOwnProperty('id'), true)
   )
+})
+
+test('a valid blog can be added', async () => {
+  await api.post(blogURI)
+    .send({
+      title: 'Atomic CSS Modules',
+      author: 'Michele Bertoli',
+      url: 'https://medium.com/@michelebertoli',
+      likes: 100,
+    })
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  const blogs = await listHelper.blogsInDb()
+  assert.strictEqual(blogs.length, listHelper.blogs.length + 1)
+  assert.strictEqual(blogs.map(b => b.title).includes('Atomic CSS Modules'), true)
 })
 
 after(() => {
