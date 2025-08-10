@@ -9,6 +9,7 @@ Content-Type: application/json
 ###
 post http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY4OTkwZjAyNjExYTNmZWM1MDZjNmEzNSIsImlhdCI6MTc1NDg2MjIyMn0.yC9xaBUMvWcgrYk5yLF8wEhbO0k-Yxuh5n99mfNqk0k
 
 {
   "title": "Tee Pot",
