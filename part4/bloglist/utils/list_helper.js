@@ -2,7 +2,6 @@ const _ = require('lodash')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-
 const dummy = (blogs) => 1
 
 const totalLike = (blogs) => {
