@@ -84,7 +84,7 @@ test('cannot add without name or url', async () => {
   assert.strictEqual(blogs.length, listHelper.blogs.length)
 })
 
-test.only('delete a valid blog', async () => {
+test('delete a valid blog', async () => {
   const blogsAtStart = await listHelper.blogsInDb()
 
   await api
@@ -96,6 +96,17 @@ test.only('delete a valid blog', async () => {
 
   const titles = blogsAtEnd.map(b => b.title)
   assert.strictEqual(titles.includes(blogsAtStart[0].title), false)
+})
+
+test.only('like a valid blog', async () => {
+  const blogsAtStart = await listHelper.blogsInDb()
+  
+  const res = await api
+    .put(`${blogURI}/${blogsAtStart[0].id}`)
+    .send({ ...blogsAtStart[0], likes: blogsAtStart[0].likes + 1 })
+    .expect(200)
+
+  assert.strictEqual(res.body.likes, blogsAtStart[0].likes + 1)
 })
 
 
