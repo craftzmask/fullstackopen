@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 
 const { info } = require('./utils/logger')
 const { MONGODB_URI } = require('./utils/config')
-const { errorHandler, unknownEndpoint } = require('./utils/middleware')
+const { errorHandler, unknownEndpoint, tokenExtractor } = require('./utils/middleware')
 
 const blogRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
@@ -21,6 +21,8 @@ mongoose
 
 app.use(express.json())
 app.use(morgan('tiny'))
+
+app.use(tokenExtractor)
 
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
