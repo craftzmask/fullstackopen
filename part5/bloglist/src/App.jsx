@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,6 +14,10 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState('')
+  const timeoutIdRef = useRef(null)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -38,44 +43,78 @@ const App = () => {
       })
       
       setUser(user)
+      setUsername('')
+      setPassword('')
       localStorage.setItem('user', JSON.stringify(user))
+      notify(`You logged in successfully`, 'success')
     } catch (exception) {
-
+      notify(exception.response.data.error, 'error')
     }
   }
 
   const handleLogoutClick = () => {
     setUser(null)
     localStorage.removeItem('user')
+    notify(`You logged out successfully`, 'success')
   }
 
   const handleCreateClick = async (blogObject) => {
     try {
       const savedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(savedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      resetForm()
+      notify(`a new blog ${savedBlog.title} added`, 'success')
     } catch (exception) {
-      console.error(exception)
+      notify(exception, 'error')
     }
+  }
+
+  const notify = (message, status) => {
+    setMessage(message)
+    setStatus(status)
+
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+    }
+
+    timeoutIdRef.current = setTimeout(() => {
+      setMessage('')
+      setStatus('')
+    }, 5000)
+  }
+
+  const resetForm = () => {
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   if (!user) {
     return (
-      <Login
-        onSubmit={handleLoginClick}
-        username={username}
-        onUsernameChange={(e) => setUsername(e.target.value)}
-        password={password}
-        onPasswordChange={(e) => setPassword(e.target.value)}
-      />
+      <div>
+        <Notification
+          message={message}
+          status={status}
+        />
+        <Login
+          onSubmit={handleLoginClick}
+          username={username}
+          onUsernameChange={(e) => setUsername(e.target.value)}
+          password={password}
+          onPasswordChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
     )
   }
 
   return (
     <div>
       <h2>blogs</h2>
+      <Notification
+        message={message}
+        status={status}
+      />
+
       <p>
         {user.name ?? user.username} logged in
         <button onClick={handleLogoutClick}>logout</button>
