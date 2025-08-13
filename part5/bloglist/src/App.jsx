@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const App = () => {
       const user = await loginService.login(credentials)
       setUser(user)
       localStorage.setItem('user', JSON.stringify(user))
-      notify(`You logged in successfully`, 'success')
+      notify('You logged in successfully', 'success')
     } catch (exception) {
       notify(exception.response.data.error, 'error')
     }
@@ -45,7 +45,7 @@ const App = () => {
   const handleLogoutClick = () => {
     setUser(null)
     localStorage.removeItem('user')
-    notify(`You logged out successfully`, 'success')
+    notify('You logged out successfully', 'success')
   }
 
   const handleCreateClick = async (blogObject) => {

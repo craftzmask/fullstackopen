@@ -1,9 +1,8 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
   const [showDetail, setShowDetail] = useState(false)
-
-  console.log(blog)
 
   const handleLikeClick = async () => {
     await onLikeClick({
@@ -39,8 +38,15 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
           )}
         </div>
       )}
-    </div>  
+    </div>
   )
 }
 
 export default Blog
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  onLikeClick: PropTypes.func.isRequired,
+  onRemoveClick: PropTypes.func.isRequired
+}

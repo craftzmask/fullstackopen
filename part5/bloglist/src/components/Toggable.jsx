@@ -30,4 +30,6 @@ const Toggable = forwardRef((props, ref) => {
   )
 })
 
+Toggable.displayName = 'Toggable'
+
 export default Toggable
