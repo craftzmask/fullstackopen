@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import blogs from '../services/blogs'
 
 const Blog = ({ blog, onLikeClick  }) => {
   const [showDetail, setShowDetail] = useState(false)
@@ -7,6 +6,7 @@ const Blog = ({ blog, onLikeClick  }) => {
   const handleLikeClick = async () => {
     await onLikeClick({
       ...blog,
+      user: blog.user.id, 
       likes: blog.likes + 1
     })
   }
