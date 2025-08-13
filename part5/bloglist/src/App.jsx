@@ -59,6 +59,11 @@ const App = () => {
     }
   }
 
+  const handleLikeClick = async (blogObject) => {
+    const updated = await blogService.update(blogObject)
+    setBlogs(blogs.map(b => b.id !== updated.id ? b : updated))
+  }
+
   const notify = (message, status) => {
     setMessage(message)
     setStatus(status)
@@ -105,7 +110,10 @@ const App = () => {
         <BlogForm onSubmit={handleCreateClick} />
       </Toggable>
 
-      <BlogList blogs={blogs} />
+      <BlogList
+        blogs={blogs}
+        onLikeClick={handleLikeClick}
+      />
     </div>
   )
 }
