@@ -6,7 +6,6 @@ const Blog = ({ blog, onLikeClick  }) => {
   const handleLikeClick = async () => {
     await onLikeClick({
       ...blog,
-      user: blog.user.id, 
       likes: blog.likes + 1
     })
   }
