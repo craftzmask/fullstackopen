@@ -1,26 +1,32 @@
-const Login = ({
-  onSubmit,
-  username,
-  onUsernameChange,
-  password,
-  onPasswordChange
-}) => {
+import { useState } from 'react'
+
+const Login = ({ onSubmit }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    await onSubmit({ username, password })
+    setUsername('')
+    setPassword('')
+  }
 
   return (
     <div>
       <h1>Login</h1>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div>
           username <input
             value={username}
-            onChange={onUsernameChange}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
 
         <div>
           password <input
+            type='password'
             value={password}
-            onChange={onPasswordChange}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 

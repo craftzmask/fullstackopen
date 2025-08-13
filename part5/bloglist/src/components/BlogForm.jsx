@@ -1,16 +1,16 @@
-const BlogForm = ({
-  title,
-  author,
-  url,
-  onTitleChange,
-  onAuthorChange,
-  onUrlChange,
-  onSubmit
-}) => {
+import { useState } from 'react'
+
+const BlogForm = ({ onSubmit }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     await onSubmit({ title, author, url })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
@@ -22,7 +22,7 @@ const BlogForm = ({
           <input
             id='title'
             value={title}
-            onChange={onTitleChange} />
+            onChange={(e) => setTitle(e.target.value)} />
         </div>
 
         <div>
@@ -30,7 +30,7 @@ const BlogForm = ({
           <input
             id='author'
             value={author}
-            onChange={onAuthorChange} />
+            onChange={(e) => setAuthor(e.target.value)} />
         </div>
 
         <div>
@@ -38,7 +38,7 @@ const BlogForm = ({
           <input
             id='url'
             value={url}
-            onChange={onUrlChange} />
+            onChange={(e) => setUrl(e.target.value)} />
         </div>
 
         <button type='submit'>create</button>
