@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, onLikeClick  }) => {
+const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
   const [showDetail, setShowDetail] = useState(false)
+
+  console.log(blog)
 
   const handleLikeClick = async () => {
     await onLikeClick({
@@ -29,6 +31,12 @@ const Blog = ({ blog, onLikeClick  }) => {
             </button>
           </div>
           <div>{blog.author}</div>
+
+          {user.username === blog.user?.username && (
+            <button onClick={() => onRemoveClick(blog)}>
+              remove
+            </button>
+          )}
         </div>
       )}
     </div>  

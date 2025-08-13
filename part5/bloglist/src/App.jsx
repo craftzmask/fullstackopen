@@ -55,13 +55,20 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       notify(`a new blog ${savedBlog.title} added`, 'success')
     } catch (exception) {
-      notify(exception, 'error')
+      notify(exception.response.data.error, 'error')
     }
   }
 
   const handleLikeClick = async (blogObject) => {
     const updated = await blogService.update(blogObject)
     setBlogs(blogs.map(b => b.id !== updated.id ? b : updated))
+  }
+
+  const handleRemoveClick = async (blogObject) => {
+    if (confirm(`Remove ${blogObject.title}?`)) {
+      await blogService.remove(blogObject)
+      setBlogs(blogs.filter(b => b.id !== blogObject.id))
+    }
   }
 
   const notify = (message, status) => {
@@ -112,7 +119,9 @@ const App = () => {
 
       <BlogList
         blogs={blogs}
+        user={user}
         onLikeClick={handleLikeClick}
+        onRemoveClick={handleRemoveClick}
       />
     </div>
   )
