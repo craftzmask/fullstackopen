@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import Login from './components/Login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Toggable from './components/Toggable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -17,6 +18,7 @@ const App = () => {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState('')
   const timeoutIdRef = useRef(null)
+  const blogFormRef = useRef()
 
 
   useEffect(() => {
@@ -63,6 +65,7 @@ const App = () => {
       const savedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(savedBlog))
       resetForm()
+      blogFormRef.current.toggleVisibility()
       notify(`a new blog ${savedBlog.title} added`, 'success')
     } catch (exception) {
       notify(exception, 'error')
@@ -119,16 +122,17 @@ const App = () => {
         {user.name ?? user.username} logged in
         <button onClick={handleLogoutClick}>logout</button>
       </p>
-
-      <BlogForm
-        title={title}
-        author={author}
-        url={url}
-        onTitleChange={(e) => setTitle(e.target.value)}
-        onAuthorChange={(e) => setAuthor(e.target.value)}
-        onUrlChange={(e) => setUrl(e.target.value)}
-        onSubmit={handleCreateClick}
-      />
+      <Toggable buttonLabel='create' ref={blogFormRef}>
+        <BlogForm
+          title={title}
+          author={author}
+          url={url}
+          onTitleChange={(e) => setTitle(e.target.value)}
+          onAuthorChange={(e) => setAuthor(e.target.value)}
+          onUrlChange={(e) => setUrl(e.target.value)}
+          onSubmit={handleCreateClick}
+        />
+      </Toggable>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
