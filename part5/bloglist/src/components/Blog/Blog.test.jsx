@@ -19,9 +19,19 @@ const blog = {
 
 describe('Render Blog component', () => {
   let container
+  let user
+  let mockHandler
 
   beforeEach(() => {
-    container = render(<Blog blog={blog} user={user} />).container
+    mockHandler = vi.fn()
+    container = render(
+      <Blog
+        blog={blog}
+        user={user}
+        onLikeClick={mockHandler}
+      />
+    ).container
+    user = userEvent.setup()
   })
 
   test('blog shows title and author by default', () => {
@@ -47,7 +57,6 @@ describe('Render Blog component', () => {
     expect(blogUrl).toBeNull()
     expect(blogLikes).toBeNull()
 
-    const user = userEvent.setup()
     const showButton = container.querySelector('.blog__button__show')
     await user.click(showButton)
 
@@ -55,5 +64,16 @@ describe('Render Blog component', () => {
     blogLikes = container.querySelector('.blog__likes')
     expect(blogUrl).toHaveTextContent(blog.url)
     expect(blogLikes).toHaveTextContent(blog.likes)
+  })
+
+  test('like button can be clicked twice and received twice', async () => {
+    const showButton = container.querySelector('.blog__button__show')
+    await user.click(showButton)
+
+    const blogLikes = container.querySelector('.blog__likes button')
+    await user.click(blogLikes)
+    await user.click(blogLikes)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
