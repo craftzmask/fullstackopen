@@ -14,9 +14,13 @@ const Login = ({ onSubmit }) => {
   return (
     <div>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
+      <form
+        data-testid="login-form"
+        onSubmit={handleSubmit}
+      >
         <div>
           username <input
+            data-testid="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -24,13 +28,19 @@ const Login = ({ onSubmit }) => {
 
         <div>
           password <input
+            data-testid="password"
             type='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        <button type='submit'>login</button>
+        <button
+          data-testid="login-button"
+          type='submit'
+        >
+          login
+        </button>
       </form>
     </div>
   )
