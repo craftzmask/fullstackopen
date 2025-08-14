@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import BlogList from './components/BlogList'
 import Login from './components/Login'
-import BlogForm from './components/BlogForm'
+import BlogForm from './components/BlogForm/BlogForm'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
 import blogService from './services/blogs'
