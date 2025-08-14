@@ -16,7 +16,9 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
       <div>
         <span className="blog__title">{blog.title}</span>
         <span className="blog__author">{blog.author}</span>
-        <button onClick={() => setShowDetail(!showDetail)}>
+        <button
+          className="blog__button__show"
+          onClick={() => setShowDetail(!showDetail)}>
           {showDetail ? 'hide' : 'view'}
         </button>
       </div>
@@ -26,14 +28,18 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
           <div className="blog__url">{blog.url}</div>
           <div className="blog__likes">
             likes {blog.likes}
-            <button onClick={handleLikeClick}>
+            <button
+              className="blog__button__like"
+              onClick={handleLikeClick}>
               like
             </button>
           </div>
           <div>{blog.author}</div>
 
           {user.username === blog.user?.username && (
-            <button onClick={() => onRemoveClick(blog)}>
+            <button
+              className="blog__button__remove"
+              onClick={() => onRemoveClick(blog)}>
               remove
             </button>
           )}
