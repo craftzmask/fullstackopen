@@ -1,6 +1,18 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
 const { loginWith, createBlog } = require('./test_helper')
 
+const blog = {
+  author: 'Jane Doe',
+  title: 'Mastering Distributed Systems',
+  url: 'https://example.com/mastering-distributed-systems'
+}
+
+const anotherBlog = {
+  author: 'Alex Nguyen',
+  title: 'Event-Driven Architectures in Practice',
+  url: 'https://example.com/event-driven-architectures'
+}
+
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await request.post('/api/testing/reset')
@@ -10,6 +22,23 @@ describe('Blog app', () => {
         password: 'root',
         name: 'The Root'
       }
+    })
+    await request.post('/api/users', {
+      data: {
+        username: 'admin',
+        password: 'admin',
+        name: 'The Admin'
+      }
+    })
+
+    const res = await request.post('/api/login', {
+      data: { username: 'admin', password: 'admin' }
+    })
+
+    const body = await res.json(); 
+    await request.post('/api/blogs', {
+      data: { ...anotherBlog, user: body.id },
+      headers: { Authorization: `Bearer ${body.token}` }
     })
 
     await page.goto('/')
@@ -35,12 +64,6 @@ describe('Blog app', () => {
   })
 
   describe('After logged in', () => {
-    const blog = {
-      author: 'Jane Doe',
-      title: 'Mastering Distributed Systems',
-      url: 'https://example.com/mastering-distributed-systems'
-    }
-
     beforeEach(async ({ page }) => {
       await loginWith(page, 'root', 'root')
       await page.getByRole('button', { name: 'create' }).click()
@@ -71,6 +94,12 @@ describe('Blog app', () => {
 
       await blogDiv.getByRole('button', { name: 'remove' }).click()
       await expect(blogDiv.getByText(blog.title)).not.toBeVisible()
+    })
+
+    test('another user cannot see remove button from other user\' blog', async ({ page }) => {
+      const blogDiv = page.locator('.blog').filter({ hasText: anotherBlog.title })
+      await blogDiv.getByRole('button', { name: 'view' }).click()
+      await expect(blogDiv.getByRole('button', { name: 'remove' })).not.toBeVisible()
     })
   })
 })
