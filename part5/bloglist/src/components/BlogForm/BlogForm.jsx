@@ -20,6 +20,7 @@ const BlogForm = ({ onSubmit }) => {
         <div>
           <label htmlFor='title'>title</label>
           <input
+            data-testid="title"
             id='title'
             value={title}
             onChange={(e) => setTitle(e.target.value)} />
@@ -28,6 +29,7 @@ const BlogForm = ({ onSubmit }) => {
         <div>
           <label htmlFor='author'>author</label>
           <input
+            data-testid="author"
             id='author'
             value={author}
             onChange={(e) => setAuthor(e.target.value)} />
@@ -36,12 +38,18 @@ const BlogForm = ({ onSubmit }) => {
         <div>
           <label htmlFor='url'>url</label>
           <input
+            data-testid="url"
             id='url'
             value={url}
             onChange={(e) => setUrl(e.target.value)} />
         </div>
 
-        <button type='submit'>create</button>
+        <button
+          data-testid="blog-button"
+          type='submit'
+        >
+          create
+        </button>
       </form>
     </div>
   )

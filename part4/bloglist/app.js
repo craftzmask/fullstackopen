@@ -28,7 +28,7 @@ app.use(morgan('tiny'))
 
 if (process.env.NODE_ENV === 'test') {
   const resetRoute = require('./controllers/reset')
-  app.use('/testing/reset', resetRoute)
+  app.use('/api/testing/reset', resetRoute)
 }
 
 app.use(tokenExtractor)

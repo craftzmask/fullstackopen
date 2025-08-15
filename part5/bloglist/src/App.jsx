@@ -35,6 +35,7 @@ const App = () => {
     try {
       const user = await loginService.login(credentials)
       setUser(user)
+      blogService.setToken(user.token)
       localStorage.setItem('user', JSON.stringify(user))
       notify('You logged in successfully', 'success')
     } catch (exception) {
