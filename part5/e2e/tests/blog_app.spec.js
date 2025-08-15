@@ -35,22 +35,32 @@ describe('Blog app', () => {
   })
 
   describe('After logged in', () => {
+    const blog = {
+      author: 'Jane Doe',
+      title: 'Mastering Distributed Systems',
+      url: 'https://example.com/mastering-distributed-systems'
+    }
+
     beforeEach(async ({ page }) => {
       await loginWith(page, 'root', 'root')
+      await page.getByRole('button', { name: 'create' }).click()
+      await createBlog(page, blog.title, blog.author, blog.url)
     })
 
     test('logged user can create a blog', async ({ page }) => {
-      const blog = {
-        author: 'Jane Doe',
-        title: 'Mastering Distributed Systems',
-        url: 'https://example.com/mastering-distributed-systems'
-      }
-
-      await page.getByRole('button', { name: 'create' }).click()
-      await createBlog(page, blog.title, blog.author, blog.url)
-
       await expect(page.getByText(`a new blog ${blog.title} added`)).toBeVisible()
       await expect(page.locator('.blog').filter({ hasText: blog.title })).toBeVisible()
+    })
+
+    test.only('a blog can be liked', async ({ page }) => {
+      const blogDiv = page.locator('.blog').filter({ hasText: blog.title })
+      await blogDiv.getByRole('button', { name: 'view' }).click()
+      
+      await blogDiv.getByRole('button', { name: 'like' }).click()
+      await expect(blogDiv.getByText('likes 1')).toBeVisible()
+      
+      await blogDiv.getByRole('button', { name: 'like' }).click()
+      await expect(blogDiv.getByText('likes 2')).toBeVisible()
     })
   })
 })

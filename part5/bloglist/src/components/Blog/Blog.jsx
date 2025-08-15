@@ -7,6 +7,7 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
   const handleLikeClick = async () => {
     await onLikeClick({
       ...blog,
+      user: user.id,
       likes: blog.likes + 1
     })
   }
