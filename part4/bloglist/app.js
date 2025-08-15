@@ -26,6 +26,11 @@ mongoose
 app.use(express.json())
 app.use(morgan('tiny'))
 
+if (process.env.NODE_ENV === 'test') {
+  const resetRoute = require('./controllers/reset')
+  app.use('/testing/reset', resetRoute)
+}
+
 app.use(tokenExtractor)
 
 app.use('/api/blogs', blogRouter)
