@@ -52,7 +52,7 @@ describe('Blog app', () => {
       await expect(page.locator('.blog').filter({ hasText: blog.title })).toBeVisible()
     })
 
-    test.only('a blog can be liked', async ({ page }) => {
+    test('a blog can be liked', async ({ page }) => {
       const blogDiv = page.locator('.blog').filter({ hasText: blog.title })
       await blogDiv.getByRole('button', { name: 'view' }).click()
       
@@ -61,6 +61,16 @@ describe('Blog app', () => {
       
       await blogDiv.getByRole('button', { name: 'like' }).click()
       await expect(blogDiv.getByText('likes 2')).toBeVisible()
+    })
+
+    test('a blog can be deleted', async ({ page }) => {
+      const blogDiv = page.locator('.blog').filter({ hasText: blog.title })
+      await blogDiv.getByRole('button', { name: 'view' }).click()
+      
+      page.on('dialog', dialog => dialog.accept())
+
+      await blogDiv.getByRole('button', { name: 'remove' }).click()
+      await expect(blogDiv.getByText(blog.title)).not.toBeVisible()
     })
   })
 })
