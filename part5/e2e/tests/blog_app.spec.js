@@ -10,7 +10,8 @@ const blog = {
 const anotherBlog = {
   author: 'Alex Nguyen',
   title: 'Event-Driven Architectures in Practice',
-  url: 'https://example.com/event-driven-architectures'
+  url: 'https://example.com/event-driven-architectures',
+  likes: 40  // add 40 here for testing the blogs are arranged in the order 
 }
 
 describe('Blog app', () => {
@@ -100,6 +101,18 @@ describe('Blog app', () => {
       const blogDiv = page.locator('.blog').filter({ hasText: anotherBlog.title })
       await blogDiv.getByRole('button', { name: 'view' }).click()
       await expect(blogDiv.getByRole('button', { name: 'remove' })).not.toBeVisible()
+    })
+
+    test.only('blogs are arranged in the order according to the likes', async ({ page }) => {
+      await expect(page.getByText(`a new blog ${blog.title} added`)).toBeVisible()
+
+      const blogDivs = await page.locator('.blog').all()
+      
+      await blogDivs[0].getByRole('button', { name: 'view' }).click()
+      await expect(blogDivs[0].getByText('likes 40')).toBeVisible()
+
+      await blogDivs[1].getByRole('button', { name: 'view' }).click()
+      await expect(blogDivs[1].getByText('likes 0')).toBeVisible()
     })
   })
 })
