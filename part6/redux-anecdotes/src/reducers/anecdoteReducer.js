@@ -44,7 +44,6 @@ const anecdoteSlicer = createSlice({
   }
 })
 
-
 export const { voteAnecdote, addAnecdote } = anecdoteSlicer.actions
 
 export default anecdoteSlicer.reducer
