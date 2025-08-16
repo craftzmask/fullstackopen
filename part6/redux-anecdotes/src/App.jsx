@@ -12,24 +12,35 @@ const App = () => {
     })
   }
 
+  const addAnecdote = (e) => {
+    e.preventDefault()
+    const content = e.target.content.value
+    e.target.content.value = ''
+
+    dispatch({
+      type: 'ADD',
+      payload: { content }
+    })
+  }
+
   return (
     <div>
       <h2>Anecdotes</h2>
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
-          <div>
-            {anecdote.content}
-          </div>
+          <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => vote(anecdote.id)}>
+              vote
+            </button>
           </div>
         </div>
       )}
       <h2>create new</h2>
-      <form>
-        <div><input /></div>
-        <button>create</button>
+      <form onSubmit={addAnecdote}>
+        <div><input name="content" /></div>
+        <button type="submit">create</button>
       </form>
     </div>
   )
