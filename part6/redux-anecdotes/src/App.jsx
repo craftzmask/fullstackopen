@@ -1,20 +1,19 @@
+import { useDispatch } from 'react-redux'
+import { useEffect } from 'react'
 import AnecdoteList from './components/AnecdoteList'
 import AnecdoteForm from './components/AnecdoteForm'
 import Filter from './components/Filter'
 import Notification from './components/Notification'
-import { useDispatch } from 'react-redux'
-import { useEffect } from 'react'
-import axios from 'axios'
 import { setAnecdotes } from './reducers/anecdoteReducer'
+import anecdoteService from './services/anecdotes'
 
 const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/anecdotes')
-      .then(res => dispatch(setAnecdotes(res.data)))
-  }, [])
+    anecdoteService.getAll()
+      .then(data => dispatch(setAnecdotes(data)))
+  }, [dispatch])
 
   return (
     <div>
