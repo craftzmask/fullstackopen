@@ -10,6 +10,8 @@ const Notification = () => {
     marginBottom: 10
   }
 
+  if (!notification) return
+
   return (
     <div style={style}>
       {notification}
