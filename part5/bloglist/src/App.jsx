@@ -6,14 +6,14 @@ import Notification from "./components/Notification";
 import Toggable from "./components/Toggable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { useDispatch } from "react-redux";
+import { notify } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
-  const timeoutIdRef = useRef(null);
   const blogFormRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -34,16 +34,16 @@ const App = () => {
       setUser(user);
       blogService.setToken(user.token);
       localStorage.setItem("user", JSON.stringify(user));
-      notify("You logged in successfully", "success");
+      dispatch(notify("You logged in successfully", "success"));
     } catch (exception) {
-      notify(exception.response.data.error, "error");
+      dispatch(notify(exception.response.data.error, "error"));
     }
   };
 
   const handleLogoutClick = () => {
     setUser(null);
     localStorage.removeItem("user");
-    notify("You logged out successfully", "success");
+    dispatch(notify("You logged out successfully", "success"));
   };
 
   const handleCreateClick = async (blogObject) => {
@@ -51,9 +51,9 @@ const App = () => {
       const savedBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(savedBlog));
       blogFormRef.current.toggleVisibility();
-      notify(`a new blog ${savedBlog.title} added`, "success");
+      dispatch(notify(`a new blog ${savedBlog.title} added`, "success"));
     } catch (exception) {
-      notify(exception.response.data.error, "error");
+      dispatch(notify(exception.response.data.error, "error"));
     }
   };
 
@@ -69,24 +69,10 @@ const App = () => {
     }
   };
 
-  const notify = (message, status) => {
-    setMessage(message);
-    setStatus(status);
-
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-    }
-
-    timeoutIdRef.current = setTimeout(() => {
-      setMessage("");
-      setStatus("");
-    }, 5000);
-  };
-
   if (!user) {
     return (
       <div>
-        <Notification message={message} status={status} />
+        <Notification />
         <Login onSubmit={handleLoginClick} />
       </div>
     );
@@ -95,7 +81,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} status={status} />
+      <Notification />
 
       <p>
         {user.name ?? user.username} logged in
