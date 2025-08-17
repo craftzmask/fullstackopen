@@ -3,7 +3,6 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import anecdoteService from './services/anecdotes'
 
-
 const App = () => {
   const result = useQuery({
     queryKey: ['anecdotes'],

@@ -6,4 +6,8 @@ const getAnecdotes = () => {
   return axios.get(baseUrl).then(res => res.data)
 }
 
-export default { getAnecdotes }
+const createAnecdote = (object) => {
+  return axios.post(baseUrl, object).then(res => res.data)
+}
+
+export default { getAnecdotes, createAnecdote }
