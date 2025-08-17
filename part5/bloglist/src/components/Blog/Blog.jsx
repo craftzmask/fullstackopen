@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState } from "react";
+import PropTypes from "prop-types";
 
-const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
-  const [showDetail, setShowDetail] = useState(false)
+const Blog = ({ blog, user, onLikeClick, onRemoveClick }) => {
+  const [showDetail, setShowDetail] = useState(false);
 
   const handleLikeClick = async () => {
     await onLikeClick({
       ...blog,
       user: user.id,
-      likes: blog.likes + 1
-    })
-  }
+      likes: blog.likes + 1,
+    });
+  };
 
   return (
     <div className="blog">
@@ -19,8 +19,9 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
         <span className="blog__author">{blog.author}</span>
         <button
           className="blog__button__show"
-          onClick={() => setShowDetail(!showDetail)}>
-          {showDetail ? 'hide' : 'view'}
+          onClick={() => setShowDetail(!showDetail)}
+        >
+          {showDetail ? "hide" : "view"}
         </button>
       </div>
 
@@ -29,9 +30,7 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
           <div className="blog__url">{blog.url}</div>
           <div className="blog__likes">
             likes {blog.likes}
-            <button
-              className="blog__button__like"
-              onClick={handleLikeClick}>
+            <button className="blog__button__like" onClick={handleLikeClick}>
               like
             </button>
           </div>
@@ -40,21 +39,22 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick  }) => {
           {user.username === blog.user?.username && (
             <button
               className="blog__button__remove"
-              onClick={() => onRemoveClick(blog)}>
+              onClick={() => onRemoveClick(blog)}
+            >
               remove
             </button>
           )}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Blog
+export default Blog;
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
   onLikeClick: PropTypes.func.isRequired,
-  onRemoveClick: PropTypes.func.isRequired
-}
+  onRemoveClick: PropTypes.func.isRequired,
+};

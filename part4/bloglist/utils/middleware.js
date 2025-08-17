@@ -1,57 +1,58 @@
-const jwt = require('jsonwebtoken')
-const logger = require('./logger')
-const User = require('../models/user')
+const jwt = require("jsonwebtoken");
+const logger = require("./logger");
+const User = require("../models/user");
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error)
-  
-  const { name } = error
-  if (name === 'CastError') {
-    return response.status(400).json({ error: 'Malformed ID' })
-  } else if (name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
-  } else if (name === 'JsonWebTokenError') {
-    return response.status(401).json({ error: 'Invalid token' })
+  logger.error(error);
+
+  const { name } = error;
+  if (name === "CastError") {
+    return response.status(400).json({ error: "Malformed ID" });
+  } else if (name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  } else if (name === "JsonWebTokenError") {
+    return response.status(401).json({ error: "Invalid token" });
   }
 
-  next(error)
-}
+  next(error);
+};
 
 const unknownEndpoint = (request, response) => {
-  return response.status(404).json({ error: 'unknown endpoint' })
-}
+  return response.status(404).json({ error: "unknown endpoint" });
+};
 
 const tokenExtractor = (request, response, next) => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    request.token = authorization.replace('Bearer ', '')
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
   }
-  
-  next()
-}
+
+  next();
+};
 
 const userExtractor = async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodedToken.id) {
     return response.status(401).json({
-      error: 'Invalid token'
-    })
+      error: "Invalid token",
+    });
   }
 
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(decodedToken.id);
   if (!user) {
     return response.status(400).json({
-      error: 'User ID is invalid'
-    })
+      error: "User ID is invalid",
+    });
   }
 
-  request.user = user
+  request.user = user;
 
-  next()
-}
+  next();
+};
 
 module.exports = {
   errorHandler,
   unknownEndpoint,
-  tokenExtractor,userExtractor 
-}
+  tokenExtractor,
+  userExtractor,
+};
