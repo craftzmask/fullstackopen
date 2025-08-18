@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useAuth, useField } from "../hooks";
 
-const Login = ({ onSubmit }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const username = useField("text");
+  const password = useField("password");
+  const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    await onSubmit({ username, password });
-    setUsername("");
-    setPassword("");
+    login({
+      username: username.inputProps.value,
+      password: password.inputProps.value,
+    });
+    username.reset();
+    password.reset();
   };
 
   return (
@@ -16,12 +20,7 @@ const Login = ({ onSubmit }) => {
       <h1>Login</h1>
       <form data-testid="login-form" onSubmit={handleSubmit}>
         <div>
-          username{" "}
-          <input
-            data-testid="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          username <input data-testid="username" {...username.inputProps} />
         </div>
 
         <div>
@@ -29,8 +28,7 @@ const Login = ({ onSubmit }) => {
           <input
             data-testid="password"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...password.inputProps}
           />
         </div>
 

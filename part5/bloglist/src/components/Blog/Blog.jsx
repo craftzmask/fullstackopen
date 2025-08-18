@@ -1,10 +1,12 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useBlog } from "../../hooks";
+import { useUsernValue } from "../../reducers/userReducer";
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog }) => {
   const [showDetail, setShowDetail] = useState(false);
   const { likeBlog, removeBlog } = useBlog();
+  const user = useUsernValue();
 
   return (
     <div className="blog">
@@ -51,5 +53,4 @@ export default Blog;
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
 };

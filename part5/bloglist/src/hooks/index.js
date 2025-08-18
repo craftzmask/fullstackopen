@@ -1,6 +1,9 @@
-import { useNotificationDispatch } from "../components/reducers/notificationReducer";
+import { useNotificationDispatch } from "../reducers/notificationReducer";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
+import loginService from "../services/login";
+import { useUserDispatch } from "../reducers/userReducer";
+import { useState } from "react";
 
 export const useNotify = () => {
   const dispatch = useNotificationDispatch();
@@ -78,5 +81,51 @@ export const useBlog = () => {
     createBlog,
     likeBlog,
     removeBlog,
+  };
+};
+
+export const useAuth = () => {
+  const userDispatch = useUserDispatch();
+  const notification = useNotify();
+
+  const login = async (credentials) => {
+    try {
+      const user = await loginService.login(credentials);
+      userDispatch({ type: "SAVE", payload: user });
+      notification.set("You logged in successfully", "success");
+    } catch (exception) {
+      notification.set(exception.response.data.error, "error");
+    }
+  };
+
+  const logout = () => {
+    userDispatch({ type: "REMOVE" });
+    notification.set("You logged out successfully", "success");
+  };
+
+  return {
+    login,
+    logout,
+  };
+};
+
+export const useField = (type) => {
+  const [value, setValue] = useState("");
+
+  const onChange = (e) => {
+    setValue(e.target.value);
+  };
+
+  const reset = () => {
+    setValue("");
+  };
+
+  return {
+    inputProps: {
+      type,
+      value,
+      onChange,
+    },
+    reset,
   };
 };

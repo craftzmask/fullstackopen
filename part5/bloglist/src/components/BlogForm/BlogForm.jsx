@@ -1,18 +1,22 @@
-import { useState } from "react";
-import { useBlog } from "../../hooks";
+import { useBlog, useField } from "../../hooks";
 
 const BlogForm = ({ onCloseForm }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const title = useField("text");
+  const author = useField("text");
+  const url = useField("text");
+
   const { createBlog } = useBlog();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createBlog({ title, author, url });
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    createBlog({
+      title: title.inputProps.value,
+      author: author.inputProps.value,
+      url: url.inputProps.value,
+    });
+    title.reset();
+    author.reset();
+    url.reset();
     onCloseForm();
   };
 
@@ -22,32 +26,17 @@ const BlogForm = ({ onCloseForm }) => {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">title</label>
-          <input
-            data-testid="title"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <input data-testid="title" id="title" {...title.inputProps} />
         </div>
 
         <div>
           <label htmlFor="author">author</label>
-          <input
-            data-testid="author"
-            id="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+          <input data-testid="author" id="author" {...author.inputProps} />
         </div>
 
         <div>
           <label htmlFor="url">url</label>
-          <input
-            data-testid="url"
-            id="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
+          <input data-testid="url" id="url" {...url.inputProps} />
         </div>
 
         <button data-testid="blog-button" type="submit">
