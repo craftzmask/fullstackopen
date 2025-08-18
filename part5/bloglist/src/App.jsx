@@ -6,14 +6,11 @@ import Notification from "./components/Notification";
 import Toggable from "./components/Toggable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import { useNotificationDispatch } from "./components/reducers/notificationReducer";
 import { useQuery } from "@tanstack/react-query";
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const timeoutIdRef = useRef(null);
   const blogFormRef = useRef();
-  const notificationDispatch = useNotificationDispatch();
 
   const query = useQuery({
     queryKey: ["blogs"],
@@ -35,43 +32,16 @@ const App = () => {
       setUser(user);
       blogService.setToken(user.token);
       localStorage.setItem("user", JSON.stringify(user));
-      notify("You logged in successfully", "success");
+      //notify("You logged in successfully", "success");
     } catch (exception) {
-      notify(exception.response.data.error, "error");
+      //notify(exception.response.data.error, "error");
     }
   };
 
   const handleLogoutClick = () => {
     setUser(null);
     localStorage.removeItem("user");
-    notify("You logged out successfully", "success");
-  };
-
-  const handleLikeClick = async (blogObject) => {
-    const updated = await blogService.update(blogObject);
-    setBlogs(blogs.map((b) => (b.id !== updated.id ? b : updated)));
-  };
-
-  const handleRemoveClick = async (blogObject) => {
-    if (confirm(`Remove ${blogObject.title}?`)) {
-      await blogService.remove(blogObject);
-      setBlogs(blogs.filter((b) => b.id !== blogObject.id));
-    }
-  };
-
-  const notify = (message, status) => {
-    notificationDispatch({
-      type: "SET",
-      payload: { message, status },
-    });
-
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-    }
-
-    timeoutIdRef.current = setTimeout(() => {
-      notificationDispatch({ type: "REMOVE" });
-    }, 5000);
+    //notify("You logged out successfully", "success");
   };
 
   if (query.isLoading) {
@@ -100,18 +70,10 @@ const App = () => {
       </p>
 
       <Toggable buttonLabel="create" ref={blogFormRef}>
-        <BlogForm
-          onCloseForm={() => blogFormRef?.current.toggleVisibility()}
-          notify={notify}
-        />
+        <BlogForm onCloseForm={() => blogFormRef?.current.toggleVisibility()} />
       </Toggable>
 
-      <BlogList
-        blogs={blogs}
-        user={user}
-        onLikeClick={handleLikeClick}
-        onRemoveClick={handleRemoveClick}
-      />
+      <BlogList blogs={blogs} user={user} />
     </div>
   );
 };

@@ -1,16 +1,10 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { useBlog } from "../../hooks";
 
-const Blog = ({ blog, user, onLikeClick, onRemoveClick }) => {
+const Blog = ({ blog, user }) => {
   const [showDetail, setShowDetail] = useState(false);
-
-  const handleLikeClick = async () => {
-    await onLikeClick({
-      ...blog,
-      user: user.id,
-      likes: blog.likes + 1,
-    });
-  };
+  const { likeBlog, removeBlog } = useBlog();
 
   return (
     <div className="blog">
@@ -30,7 +24,10 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick }) => {
           <div className="blog__url">{blog.url}</div>
           <div className="blog__likes">
             likes {blog.likes}
-            <button className="blog__button__like" onClick={handleLikeClick}>
+            <button
+              className="blog__button__like"
+              onClick={() => likeBlog(blog, user)}
+            >
               like
             </button>
           </div>
@@ -39,7 +36,7 @@ const Blog = ({ blog, user, onLikeClick, onRemoveClick }) => {
           {user.username === blog.user?.username && (
             <button
               className="blog__button__remove"
-              onClick={() => onRemoveClick(blog)}
+              onClick={() => removeBlog(blog)}
             >
               remove
             </button>
@@ -55,6 +52,4 @@ export default Blog;
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
-  onLikeClick: PropTypes.func.isRequired,
-  onRemoveClick: PropTypes.func.isRequired,
 };
