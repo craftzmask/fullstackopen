@@ -6,14 +6,14 @@ import Notification from "./components/Notification";
 import Toggable from "./components/Toggable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { useNotificationDispatch } from "./components/reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
   const timeoutIdRef = useRef(null);
   const blogFormRef = useRef();
+  const notificationDispatch = useNotificationDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -70,23 +70,24 @@ const App = () => {
   };
 
   const notify = (message, status) => {
-    setMessage(message);
-    setStatus(status);
+    notificationDispatch({
+      type: "SET",
+      payload: { message, status },
+    });
 
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current);
     }
 
     timeoutIdRef.current = setTimeout(() => {
-      setMessage("");
-      setStatus("");
+      notificationDispatch({ type: "REMOVE" });
     }, 5000);
   };
 
   if (!user) {
     return (
       <div>
-        <Notification message={message} status={status} />
+        <Notification />
         <Login onSubmit={handleLoginClick} />
       </div>
     );
@@ -95,7 +96,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} status={status} />
+      <Notification />
 
       <p>
         {user.name ?? user.username} logged in
