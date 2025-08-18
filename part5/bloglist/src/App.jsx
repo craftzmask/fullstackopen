@@ -7,17 +7,18 @@ import Toggable from "./components/Toggable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { useNotificationDispatch } from "./components/reducers/notificationReducer";
+import { useQuery } from "@tanstack/react-query";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const timeoutIdRef = useRef(null);
   const blogFormRef = useRef();
   const notificationDispatch = useNotificationDispatch();
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  const query = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
@@ -44,17 +45,6 @@ const App = () => {
     setUser(null);
     localStorage.removeItem("user");
     notify("You logged out successfully", "success");
-  };
-
-  const handleCreateClick = async (blogObject) => {
-    try {
-      const savedBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(savedBlog));
-      blogFormRef.current.toggleVisibility();
-      notify(`a new blog ${savedBlog.title} added`, "success");
-    } catch (exception) {
-      notify(exception.response.data.error, "error");
-    }
   };
 
   const handleLikeClick = async (blogObject) => {
@@ -84,6 +74,12 @@ const App = () => {
     }, 5000);
   };
 
+  if (query.isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  const blogs = query.data;
+
   if (!user) {
     return (
       <div>
@@ -104,7 +100,10 @@ const App = () => {
       </p>
 
       <Toggable buttonLabel="create" ref={blogFormRef}>
-        <BlogForm onSubmit={handleCreateClick} />
+        <BlogForm
+          onCloseForm={() => blogFormRef?.current.toggleVisibility()}
+          notify={notify}
+        />
       </Toggable>
 
       <BlogList

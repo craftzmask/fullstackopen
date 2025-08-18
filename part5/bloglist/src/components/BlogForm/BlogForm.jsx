@@ -1,16 +1,31 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import blogService from "../../services/blogs";
 
-const BlogForm = ({ onSubmit }) => {
+const BlogForm = ({ onCloseForm, notify }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const queryClient = useQueryClient();
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      onCloseForm();
+      notify(`a new blog ${newBlog.title} added`, "success");
+    },
+    onError: (exception) => {
+      notify(exception.response.data.error, "error");
+    },
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onSubmit({ title, author, url });
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    newBlogMutation.mutate({ title, author, url });
   };
 
   return (
