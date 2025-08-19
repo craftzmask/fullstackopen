@@ -1,10 +1,8 @@
 import { useState, forwardRef, useImperativeHandle } from "react";
+import { Button, Box, Collapse } from "@mui/material";
 
 const Toggable = forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false);
-
-  const hideWhenVisible = { display: visible ? "none" : "" };
-  const showWhenVisible = { display: visible ? "" : "none" };
 
   const toggleVisibility = () => {
     setVisible(!visible);
@@ -17,16 +15,24 @@ const Toggable = forwardRef((props, ref) => {
   });
 
   return (
-    <div>
-      <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
-      </div>
+    <Box>
+      {!visible && (
+        <Button variant="contained" onClick={toggleVisibility}>
+          {props.buttonLabel}
+        </Button>
+      )}
 
-      <div style={showWhenVisible}>
-        {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
-      </div>
-    </div>
+      <Collapse in={visible}>
+        <Box mt={2}>
+          {props.children}
+          <Box mt={1}>
+            <Button variant="outlined" onClick={toggleVisibility}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Collapse>
+    </Box>
   );
 });
 

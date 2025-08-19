@@ -11,6 +11,15 @@ import { Link, Route, Routes, useLocation } from "react-router-dom";
 import UserList from "./components/UserList";
 import User from "./components/User";
 
+import {
+  Container,
+  AppBar,
+  Toolbar,
+  Button,
+  Typography,
+  Box,
+} from "@mui/material";
+
 const App = () => {
   const currentUser = useUsernValue();
   const { logout } = useAuth();
@@ -27,25 +36,37 @@ const App = () => {
   }
 
   return (
-    <div>
-      <nav
-        style={{
-          display: "flex",
-          gap: 8,
-          background: "#D3D3D3",
-        }}
-      >
-        <Link to="/">blogs</Link>
-        <Link to="/users">users</Link>
+    <Container>
+      <AppBar position="static" sx={{ mb: 2 }}>
+        <Toolbar sx={{ display: "flex", gap: 2 }}>
+          {/* Left links */}
+          <Button component={Link} to="/" color="inherit">
+            Blogs
+          </Button>
+          <Button component={Link} to="/users" color="inherit">
+            Users
+          </Button>
 
-        <span>
-          <strong>{currentUser.name ?? currentUser.username}</strong> logged in
-          <button onClick={logout}>logout</button>
-        </span>
-      </nav>
+          {/* Spacer pushes user info to the right */}
+          <Box sx={{ flexGrow: 1 }} />
+
+          {/* Right side user info */}
+          <Typography variant="body1" sx={{ mr: 2 }}>
+            <strong>{currentUser.name ?? currentUser.username}</strong> logged
+            in
+          </Typography>
+
+          <Button variant="contained" color="error" onClick={logout}>
+            Logout
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       <main>
-        <h2>blogs</h2>
+        <Typography variant="h3" sx={{ mb: 5 }}>
+          Blog App
+        </Typography>
+
         <Notification />
 
         {location.pathname === "/" && (
@@ -63,7 +84,7 @@ const App = () => {
           <Route path="/users/:id" element={<User />} />
         </Routes>
       </main>
-    </div>
+    </Container>
   );
 };
 

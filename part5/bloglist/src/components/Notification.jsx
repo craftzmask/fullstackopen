@@ -1,4 +1,5 @@
 import { useNotificationValue } from "../reducers/notificationReducer";
+import Alert from "@mui/material/Alert";
 
 const Notification = () => {
   const notification = useNotificationValue();
@@ -7,7 +8,11 @@ const Notification = () => {
     return null;
   }
 
-  return <div className={notification.status}>{notification.message}</div>;
+  return (
+    <Alert severity={notification.status} sx={{ mb: 3 }}>
+      {notification.message}
+    </Alert>
+  );
 };
 
 export default Notification;
