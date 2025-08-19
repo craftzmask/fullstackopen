@@ -24,7 +24,7 @@ const User = () => {
       <strong>added blogs</strong>
       <ul>
         {data.blogs.map((b) => (
-          <li key={b.titl}>{b.title}</li>
+          <li key={b.id}>{b.title}</li>
         ))}
       </ul>
     </div>
