@@ -13,7 +13,6 @@ const getAll = async () => {
 };
 
 const get = async (id) => {
-  console.log("here:", id);
   const res = await axios.get(`${baseUrl}/${id}`);
   return res.data;
 };
@@ -40,4 +39,9 @@ const remove = async (object) => {
   return response.data;
 };
 
-export default { getAll, get, create, update, remove, setToken };
+const comment = async (blogId, text) => {
+  const response = await axios.post(`${baseUrl}/${blogId}/comments`, { text });
+  return response.data;
+};
+
+export default { getAll, get, create, update, remove, comment, setToken };

@@ -3,12 +3,12 @@ import { useUsernValue } from "../../reducers/userReducer";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import blogService from "../../services/blogs";
+import CommentForm from "../CommentForm";
 
 const Blog = () => {
   const { likeBlog, removeBlog } = useBlog();
   const user = useUsernValue();
   const { id } = useParams();
-  console.log(typeof id);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["blogs", id],
@@ -50,6 +50,14 @@ const Blog = () => {
           </button>
         )}
       </div>
+
+      <h2>comments</h2>
+      <CommentForm blogId={data.id} />
+      <ul>
+        {data.comments.map((c) => (
+          <li key={c}>{c}</li>
+        ))}
+      </ul>
     </div>
   );
 };

@@ -27,6 +27,14 @@ blogRouter.post("/", userExtractor, async (request, response, next) => {
   response.status(201).json(populatedBlog);
 });
 
+blogRouter.post("/:id/comments", async (request, response, next) => {
+  const blog = await Blog.findById(request.params.id).populate("user");
+  const comment = request.body.text;
+  blog.comments.push(comment);
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog.comments.at(-1));
+});
+
 blogRouter.put("/:id", async (request, response, next) => {
   const blog = await Blog.findByIdAndUpdate(
     request.params.id,

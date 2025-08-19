@@ -77,6 +77,8 @@ export const useBlog = () => {
     }
   };
 
+  const commentBlog = (blog, text) => {};
+
   return {
     createBlog,
     likeBlog,
