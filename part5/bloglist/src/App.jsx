@@ -6,6 +6,8 @@ import Notification from "./components/Notification";
 import Toggable from "./components/Toggable";
 import { useUsernValue } from "./reducers/userReducer";
 import { useAuth } from "./hooks";
+import { Route, Routes } from "react-router-dom";
+import UserList from "./components/UserList";
 
 const App = () => {
   const user = useUsernValue();
@@ -31,11 +33,17 @@ const App = () => {
         <button onClick={logout}>logout</button>
       </p>
 
+      {/*
+
       <Toggable buttonLabel="create" ref={blogFormRef}>
         <BlogForm onCloseForm={() => blogFormRef?.current.toggleVisibility()} />
       </Toggable>
 
-      <BlogList />
+      <BlogList /> */}
+
+      <Routes>
+        <Route path="/users" element={<UserList />} />
+      </Routes>
     </div>
   );
 };
