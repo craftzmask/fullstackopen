@@ -12,6 +12,12 @@ const getAll = async () => {
   return response.data;
 };
 
+const get = async (id) => {
+  console.log("here:", id);
+  const res = await axios.get(`${baseUrl}/${id}`);
+  return res.data;
+};
+
 const create = async (object) => {
   const config = {
     headers: { Authorization: `Bearer ${token}` },
@@ -34,4 +40,4 @@ const remove = async (object) => {
   return response.data;
 };
 
-export default { getAll, create, update, remove, setToken };
+export default { getAll, get, create, update, remove, setToken };

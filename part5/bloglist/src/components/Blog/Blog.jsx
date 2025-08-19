@@ -1,56 +1,57 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
 import { useBlog } from "../../hooks";
 import { useUsernValue } from "../../reducers/userReducer";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import blogService from "../../services/blogs";
 
-const Blog = ({ blog }) => {
-  const [showDetail, setShowDetail] = useState(false);
+const Blog = () => {
   const { likeBlog, removeBlog } = useBlog();
   const user = useUsernValue();
+  const { id } = useParams();
+  console.log(typeof id);
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["blogs", id],
+    queryFn: () => blogService.get(id),
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
-    <div className="blog">
+    <div>
       <div>
-        <span className="blog__title">{blog.title}</span>
-        <span className="blog__author">{blog.author}</span>
-        <button
-          className="blog__button__show"
-          onClick={() => setShowDetail(!showDetail)}
-        >
-          {showDetail ? "hide" : "view"}
-        </button>
-      </div>
-
-      {showDetail && (
-        <div>
-          <div className="blog__url">{blog.url}</div>
-          <div className="blog__likes">
-            likes {blog.likes}
-            <button
-              className="blog__button__like"
-              onClick={() => likeBlog(blog, user)}
-            >
-              like
-            </button>
-          </div>
-          <div>{blog.author}</div>
-
-          {user.username === blog.user?.username && (
-            <button
-              className="blog__button__remove"
-              onClick={() => removeBlog(blog)}
-            >
-              remove
-            </button>
-          )}
+        <h2>{data.title}</h2>
+        <a className="blog__url" href={data.url}>
+          {data.url}
+        </a>
+        <div className="blog__likes">
+          likes {data.likes}
+          <button
+            className="blog__button__like"
+            onClick={() => likeBlog(data, user)}
+          >
+            like
+          </button>
         </div>
-      )}
+        <div>{data.author}</div>
+
+        {user.username === data.user?.username && (
+          <button
+            className="blog__button__remove"
+            onClick={() => removeBlog(data)}
+          >
+            remove
+          </button>
+        )}
+      </div>
     </div>
   );
 };
 
 export default Blog;
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-};

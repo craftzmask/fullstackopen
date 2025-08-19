@@ -7,6 +7,11 @@ blogRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
+blogRouter.get("/:id", async (request, response, next) => {
+  const blog = await Blog.findById(request.params.id).populate("user");
+  response.json(blog);
+});
+
 blogRouter.post("/", userExtractor, async (request, response, next) => {
   const blog = new Blog(request.body);
   const user = request.user;

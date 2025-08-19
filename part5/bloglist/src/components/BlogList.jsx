@@ -1,27 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-import Blog from "./Blog/Blog";
 import blogService from "../services/blogs";
+import { Link } from "react-router-dom";
 
 const BlogList = () => {
-  const query = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
   });
 
-  if (query.isLoading) {
+  if (isLoading) {
     return <p>Loading...</p>;
   }
 
-  const blogs = query.data;
-
   return (
-    <>
-      {blogs
+    <div>
+      {data
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <div key={blog.id} className="blog">
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} {blog.author}
+            </Link>
+          </div>
         ))}
-    </>
+    </div>
   );
 };
 
