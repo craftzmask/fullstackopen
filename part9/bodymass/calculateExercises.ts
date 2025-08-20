@@ -45,3 +45,35 @@ const calculateExercises = (
     average,
   };
 };
+
+try {
+  if (process.argv.length < 4) {
+    throw Error(
+      "Invalid arguments: npm run calculateExercises <target> <h1> [h2 ...]"
+    );
+  }
+
+  const targetAmount = Number(process.argv[2]);
+  const dailyExerciseHours = process.argv.slice(3).map((h) => {
+    const hours = Number(h);
+    if (!Number.isFinite(hours)) {
+      throw Error(
+        "Invalid arguments: Daily hour must be a finite positive number"
+      );
+    }
+
+    if (hours < 0) {
+      throw Error(
+        "Invalid arguments: All daily hours must be finite numbers ≥ 0"
+      );
+    }
+
+    return hours;
+  });
+
+  console.log(calculateExercises(dailyExerciseHours, targetAmount));
+} catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error(error.message);
+  }
+}
