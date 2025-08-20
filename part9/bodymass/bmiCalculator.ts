@@ -1,4 +1,4 @@
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const bmi: number = weight / ((height / 100) * (height / 100));
 
   if (bmi < 18.5) {
@@ -12,15 +12,12 @@ const calculateBmi = (height: number, weight: number): string => {
   }
 };
 
-try {
-  if (process.argv.length !== 4) {
-    throw new Error(
-      "Invalid arguments: npm run calculateBmi <height> <weight>"
-    );
-  }
-
-  const height = Number(process.argv[2]);
-  const weight = Number(process.argv[3]);
+export const parseBmiArguments = (
+  heightArg: string,
+  weightArg: string
+): { height: number; weight: number } => {
+  const height = Number(heightArg);
+  const weight = Number(weightArg);
 
   if (!Number.isFinite(height) || !Number.isFinite(weight)) {
     throw new Error("Invalid arguments: Height or weight must be a number");
@@ -32,9 +29,27 @@ try {
     );
   }
 
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  if (error instanceof Error) {
-    console.error(error.message);
+  return { height, weight };
+};
+
+if (typeof require !== "undefined" && require.main === module) {
+  try {
+    if (process.argv.length !== 4) {
+      throw new Error(
+        "Invalid arguments: npm run calculateBmi <height> <weight>"
+      );
+    }
+
+    const { height, weight } = parseBmiArguments(
+      process.argv[2],
+      process.argv[3]
+    );
+
+    console.log(calculateBmi(height, weight));
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      process.exit(1);
+    }
   }
 }
