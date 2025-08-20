@@ -8,16 +8,22 @@
     "bmiCalculator": "ts-node bmiCalculator.ts",
     "calculateExercises": "ts-node calculateExercises.ts",
     "ts-node": "ts-node",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@stylistic/eslint-plugin": "^5.2.3",
+    "@types/eslint__js": "^8.42.3",
     "@types/express": "^5.0.3",
+    "eslint": "^9.33.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.40.0"
   },
   "dependencies": {
     "express": "^5.1.0"
