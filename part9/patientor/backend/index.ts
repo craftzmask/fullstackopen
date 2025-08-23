@@ -1,8 +1,8 @@
 import express from "express";
 const app = express();
 
-import diagnosisRouter from "./routes/diagnoses";
-import patientRouter from "./routes/patients";
+import diagnosisRouter from "./src/routes/diagnoses";
+import patientRouter from "./src/routes/patients";
 
 app.use(express.json());
 
