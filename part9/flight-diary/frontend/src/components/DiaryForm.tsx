@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { NewDiaryEntry } from "../types";
+import { visibilitySchema, weatherSchema, type NewDiaryEntry } from "../types";
 
 interface DiaryFormProps {
   onSubmit: (object: NewDiaryEntry) => void;
@@ -39,23 +39,45 @@ const DiaryForm = ({ onSubmit }: DiaryFormProps) => {
       </div>
 
       <div>
-        <label htmlFor="visibility">visibility</label>
-        <input
-          type="text"
-          id="visibility"
-          value={visibility}
-          onChange={(e) => setVisibility(e.target.value)}
-        />
+        visibility
+        {visibilitySchema.options.map((v) => {
+          const id = `visibility-${v}`;
+          return (
+            <label key={v} htmlFor={id} style={{ marginRight: 12 }}>
+              <input
+                type="radio"
+                id={id}
+                name="visibility"
+                value={v}
+                checked={visibility === v}
+                onChange={() => setVisibility(v)}
+                required
+              />
+              {v}
+            </label>
+          );
+        })}
       </div>
 
       <div>
-        <label htmlFor="weather">weather</label>
-        <input
-          type="text"
-          id="weather"
-          value={weather}
-          onChange={(e) => setWeather(e.target.value)}
-        />
+        weather
+        {weatherSchema.options.map((w) => {
+          const id = `weather-${w}`;
+          return (
+            <label key={w} htmlFor={id} style={{ marginRight: 12 }}>
+              <input
+                type="radio"
+                id={id}
+                name="weather"
+                value={w}
+                checked={weather === w}
+                onChange={() => setWeather(w)}
+                required
+              />
+              {w}
+            </label>
+          );
+        })}
       </div>
 
       <div>

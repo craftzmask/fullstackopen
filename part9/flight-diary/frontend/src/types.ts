@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface DiaryEntry {
   id: number;
   date: string;
@@ -6,8 +8,18 @@ export interface DiaryEntry {
   comment: string;
 }
 
-export type Weather = "sunny" | "rainy" | "cloudy" | "stormy" | "windy";
+export const weatherSchema = z.enum([
+  "sunny",
+  "rainy",
+  "cloudy",
+  "stormy",
+  "windy",
+]);
 
-export type Visibility = "great" | "good" | "ok" | "poor";
+export type Weather = z.infer<typeof weatherSchema>;
+
+export const visibilitySchema = z.enum(["great", "good", "ok", "poor"]);
+
+export type Visibility = z.infer<typeof visibilitySchema>;
 
 export type NewDiaryEntry = Omit<DiaryEntry, "id">;
