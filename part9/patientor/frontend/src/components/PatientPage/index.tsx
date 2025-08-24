@@ -5,13 +5,16 @@ import { Typography, Stack } from "@mui/material";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import patientService from "../../services/patients";
+import EntryList from "./EntryList";
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient>();
   const { id } = useParams();
 
   useEffect(() => {
-    patientService.getOne(id).then((data) => setPatient(data));
+    if (id) {
+      patientService.getOne(id).then((data) => setPatient(data));
+    }
   }, [id]);
 
   return (
@@ -32,6 +35,8 @@ const PatientPage = () => {
       <Typography>ssn: {patient?.ssn}</Typography>
 
       <Typography>occupation: {patient?.occupation}</Typography>
+
+      <EntryList entries={patient?.entries || []} />
     </Stack>
   );
 };
