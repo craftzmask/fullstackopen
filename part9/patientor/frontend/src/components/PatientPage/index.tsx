@@ -6,8 +6,13 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import patientService from "../../services/patients";
 import EntryList from "./EntryList";
+import { Diagnosis } from "../../types";
 
-const PatientPage = () => {
+interface Props {
+  diagnoses: Record<Diagnosis["code"], Diagnosis>;
+}
+
+const PatientPage = ({ diagnoses }: Props) => {
   const [patient, setPatient] = useState<Patient>();
   const { id } = useParams();
 
@@ -36,7 +41,7 @@ const PatientPage = () => {
 
       <Typography>occupation: {patient?.occupation}</Typography>
 
-      <EntryList entries={patient?.entries || []} />
+      <EntryList entries={patient?.entries || []} diagnoses={diagnoses} />
     </Stack>
   );
 };

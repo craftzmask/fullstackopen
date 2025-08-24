@@ -10,8 +10,27 @@ import patientService from "./services/patients";
 import PatientListPage from "./components/PatientListPage";
 import PatientPage from "./components/PatientPage";
 
+import { Diagnosis } from "./types";
+import diagnosisService from "./services/diagnoses";
+
 const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [diagnoses, setDiagnoses] = useState<
+    Record<Diagnosis["code"], Diagnosis>
+  >({});
+
+  useEffect(() => {
+    const fetchDiagnosisList = async () => {
+      const diagnoses = await diagnosisService.getAll();
+      setDiagnoses(
+        diagnoses.reduce((acc, item) => {
+          acc[item.code] = item;
+          return acc;
+        }, {} as Record<Diagnosis["code"], Diagnosis>)
+      );
+    };
+    void fetchDiagnosisList();
+  }, []);
 
   useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
@@ -44,7 +63,10 @@ const App = () => {
                 />
               }
             />
-            <Route path="/patients/:id" element={<PatientPage />} />
+            <Route
+              path="/patients/:id"
+              element={<PatientPage diagnoses={diagnoses} />}
+            />
           </Routes>
         </Container>
       </Router>
