@@ -11,6 +11,7 @@ const App = () => {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [notification, setNotification] = useState("");
+  const [notificationType, setNotificationType] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const filteredPersons = persons.filter(({ name }) => {
     return name.toLowerCase().includes(searchKeyword.toLowerCase());
@@ -20,15 +21,18 @@ const App = () => {
     personService.getAll().then((data) => setPersons(data));
   }, []);
 
-  const notify = (message) => {
+  const notify = (message, type) => {
     setNotification(message);
+    setNotificationType(type);
     setTimeout(() => {
       setNotification("");
+      setNotificationType("");
     }, 5000);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     const foundPerson = persons.find((person) => person.name === name);
     if (foundPerson) {
       if (
@@ -46,7 +50,13 @@ const App = () => {
             );
             setName("");
             setNumber("");
-            notify(`Updated ${returnedData.name}`);
+            notify(`Updated ${returnedData.name}`, "success");
+          })
+          .catch(() => {
+            setPersons(
+              persons.filter((person) => person.id !== foundPerson.id),
+            );
+            notify(`Info of ${foundPerson.name} has been deleted`, "error");
           });
       }
       return;
@@ -56,7 +66,7 @@ const App = () => {
       setPersons(persons.concat(returnedData));
       setName("");
       setNumber("");
-      notify(`Added ${returnedData.name}`);
+      notify(`Added ${returnedData.name}`, "success");
     });
   };
 
@@ -64,6 +74,7 @@ const App = () => {
     if (confirm(`Delete ${person.name}?`)) {
       personService.remove(person.id).then(() => {
         setPersons(persons.filter(({ id }) => id !== person.id));
+        notify(`Deleted ${person.name}`, "success");
       });
     }
   };
@@ -71,7 +82,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification message={notification} type={notificationType} />
       <SearchFilter
         value={searchKeyword}
         onChange={(event) => setSearchKeyword(event.target.value)}
