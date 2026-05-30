@@ -1,5 +1,14 @@
 import { useState } from "react";
 
+const Anecdote = ({ text, vote }) => {
+  return (
+    <div>
+      <p>{text}</p>
+      <p>has {vote} votes</p>
+    </div>
+  );
+};
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -14,6 +23,7 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
+  const mostVotedIndex = votes.indexOf(Math.max(...votes));
 
   const handleNextClick = () => {
     let index = selected;
@@ -31,10 +41,13 @@ const App = () => {
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes</p>
+      <h2>Anecdote of the day</h2>
+      <Anecdote text={anecdotes[selected]} vote={votes[selected]} />
       <button onClick={handleVoteClick}>vote</button>
       <button onClick={handleNextClick}>next anecdote</button>
+
+      <h2>Anecdote with most votes</h2>
+      <Anecdote text={anecdotes[mostVotedIndex]} vote={votes[mostVotedIndex]} />
     </div>
   );
 };
