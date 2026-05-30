@@ -10,8 +10,14 @@ const add = (person) => {
   return axios.post(baseUrl, person).then((response) => response.data);
 };
 
+const update = (person) => {
+  return axios
+    .put(`${baseUrl}/${person.id}`, person)
+    .then((response) => response.data);
+};
+
 const remove = (id) => {
   return axios.delete(`${baseUrl}/${id}`);
 };
 
-export default { getAll, add, remove };
+export default { getAll, add, update, remove };

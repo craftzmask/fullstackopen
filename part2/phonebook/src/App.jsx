@@ -20,8 +20,25 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (persons.find((person) => person.name === name)) {
-      alert(`${name} is already added to phonebook`);
+    const foundPerson = persons.find((person) => person.name === name);
+    if (foundPerson) {
+      if (
+        confirm(
+          `${name} is already added to phonebook, replace old number with the new one?`,
+        )
+      ) {
+        personService
+          .update({ ...foundPerson, number })
+          .then((returnedData) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === returnedData.id ? returnedData : person,
+              ),
+            );
+            setName("");
+            setNumber("");
+          });
+      }
       return;
     }
 
