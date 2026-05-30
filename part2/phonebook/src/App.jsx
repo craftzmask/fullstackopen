@@ -4,11 +4,13 @@ import SearchFilter from "./components/SearchFilter";
 import AddPersonForm from "./components/AddPersonForm";
 import PersonList from "./components/PersonList";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
+  const [notification, setNotification] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const filteredPersons = persons.filter(({ name }) => {
     return name.toLowerCase().includes(searchKeyword.toLowerCase());
@@ -17,6 +19,13 @@ const App = () => {
   useEffect(() => {
     personService.getAll().then((data) => setPersons(data));
   }, []);
+
+  const notify = (message) => {
+    setNotification(message);
+    setTimeout(() => {
+      setNotification("");
+    }, 5000);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -37,6 +46,7 @@ const App = () => {
             );
             setName("");
             setNumber("");
+            notify(`Updated ${returnedData.name}`);
           });
       }
       return;
@@ -46,6 +56,7 @@ const App = () => {
       setPersons(persons.concat(returnedData));
       setName("");
       setNumber("");
+      notify(`Added ${returnedData.name}`);
     });
   };
 
@@ -60,6 +71,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <SearchFilter
         value={searchKeyword}
         onChange={(event) => setSearchKeyword(event.target.value)}
