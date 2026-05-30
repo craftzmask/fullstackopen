@@ -32,6 +32,14 @@ const App = () => {
     });
   };
 
+  const handleDeleteClick = (person) => {
+    if (confirm(`Delete ${person.name}?`)) {
+      personService.remove(person.id).then(() => {
+        setPersons(persons.filter(({ id }) => id !== person.id));
+      });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -50,7 +58,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <PersonList persons={filteredPersons} />
+      <PersonList persons={filteredPersons} onDeleteClick={handleDeleteClick} />
     </div>
   );
 };
