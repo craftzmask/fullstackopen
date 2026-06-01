@@ -5,6 +5,7 @@ import CountryList from "./components/CountryList";
 function App() {
   const [countries, setCountries] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
   const filteredCountries = countries.filter((country) => {
     const name = country.name.common.toLowerCase();
     return keyword.length > 0 && name.includes(keyword.toLowerCase());
@@ -26,7 +27,11 @@ function App() {
             onChange={(event) => setKeyword(event.target.value)}
           />
         </div>
-        <CountryList countries={filteredCountries} />
+        <CountryList
+          countries={filteredCountries}
+          selectedCountry={selectedCountry}
+          onShowClick={(countryName) => setSelectedCountry(countryName)}
+        />
       </div>
     </>
   );
