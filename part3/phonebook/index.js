@@ -63,6 +63,22 @@ app.delete("/api/persons/:id", (req, res) => {
   Person.findByIdAndDelete(req.params.id).then(() => res.status(204).end());
 });
 
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message);
+
+  if (err.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+};
+
+app.use(errorHandler);
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`);
