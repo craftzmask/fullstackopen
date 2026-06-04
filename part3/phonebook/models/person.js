@@ -2,9 +2,7 @@ const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);
 mongoose
-  .connect(
-    `mongodb+srv://khanhchung:khanhchung@cluster0.la8qjkr.mongodb.net/phonebook`,
-  )
+  .connect(process.env.MONGODB_URI, { family: 4 })
   .then(() => {
     console.log("Connected to MongoDb successfully");
   })
