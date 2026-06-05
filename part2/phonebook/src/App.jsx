@@ -62,12 +62,15 @@ const App = () => {
       return;
     }
 
-    personService.add({ name, number }).then((returnedData) => {
-      setPersons(persons.concat(returnedData));
-      setName("");
-      setNumber("");
-      notify(`Added ${returnedData.name}`, "success");
-    });
+    personService
+      .add({ name, number })
+      .then((returnedData) => {
+        setPersons(persons.concat(returnedData));
+        setName("");
+        setNumber("");
+        notify(`Added ${returnedData.name}`, "success");
+      })
+      .catch((error) => notify(error.response.data.error, "error"));
   };
 
   const handleDeleteClick = (person) => {

@@ -45,18 +45,13 @@ app.get("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const { name, number } = req.body;
-
-  if (!(name && number)) {
-    return res.status(400).json({
-      error: "The name or number is missing",
-    });
-  }
-
   const newPerson = new Person({ name, number });
-
-  newPerson.save().then((result) => res.json(result));
+  newPerson
+    .save()
+    .then((result) => res.json(result))
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -92,6 +87,8 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
+  } else if (err.name === "ValidationError") {
+    return res.status(400).send({ error: err.message });
   }
 };
 
