@@ -60,6 +60,24 @@ app.post("/api/persons", (req, res) => {
   newPerson.save().then((result) => res.json(result));
 });
 
+app.put("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (!person) {
+        return res.status(404).end();
+      }
+
+      const { name, number } = req.body;
+      person.name = name;
+      person.number = number;
+
+      return person.save().then((updatedPerson) => {
+        res.json(updatedPerson);
+      });
+    })
+    .catch((error) => next(error));
+});
+
 app.delete("/api/persons/:id", (req, res) => {
   Person.findByIdAndDelete(req.params.id).then(() => res.status(204).end());
 });
