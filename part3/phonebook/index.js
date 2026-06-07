@@ -14,6 +14,7 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body"),
 );
 
+// eslint-disable-next-line no-unused-vars
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 
 app.get("/info", (req, res) => {
@@ -90,6 +91,8 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "ValidationError") {
     return res.status(400).send({ error: err.message });
   }
+
+  next(err);
 };
 
 app.use(errorHandler);
