@@ -74,3 +74,27 @@ describe("most blogs", () => {
     });
   });
 });
+
+describe("most likes", () => {
+  test("0 blogs equals null", () => {
+    const result = listHelper.mostLikes([]);
+    assert.strictEqual(result, null);
+  });
+
+  test("1 blog equals to that blog itself", () => {
+    const blogs = listHelper.blogs.slice(0, 1);
+    const result = listHelper.mostLikes(blogs);
+    assert.deepStrictEqual(result, {
+      author: blogs[0].author,
+      likes: blogs[0].likes,
+    });
+  });
+
+  test("blogs equals the most likes blog", () => {
+    const result = listHelper.mostLikes(listHelper.blogs);
+    assert.deepStrictEqual(result, {
+      author: "Edsger W. Dijkstra",
+      likes: 17,
+    });
+  });
+});
