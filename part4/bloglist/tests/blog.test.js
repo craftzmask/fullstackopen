@@ -50,3 +50,27 @@ describe("favorite blog", () => {
     });
   });
 });
+
+describe("most blogs", () => {
+  test("0 blogs equals null", () => {
+    const result = listHelper.mostBlogs([]);
+    assert.strictEqual(result, null);
+  });
+
+  test("1 blog equals to that blog itself", () => {
+    const blogs = listHelper.blogs.slice(0, 1);
+    const result = listHelper.mostBlogs(blogs);
+    assert.deepStrictEqual(result, {
+      author: blogs[0].author,
+      blogs: 1,
+    });
+  });
+
+  test("blogs equals the most likes blog", () => {
+    const result = listHelper.mostBlogs(listHelper.blogs);
+    assert.deepStrictEqual(result, {
+      author: "Robert C. Martin",
+      blogs: 3,
+    });
+  });
+});
