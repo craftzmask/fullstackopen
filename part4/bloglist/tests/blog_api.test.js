@@ -23,6 +23,14 @@ test("blogs can be retrieved", async () => {
   assert.strictEqual(response.body.length, helper.blogs.length);
 });
 
+test("each blog has an id", async () => {
+  const response = await api.get("/api/blogs");
+  response.body.forEach((blog) => {
+    assert.strictEqual(typeof blog.id, "string");
+    assert.strictEqual(typeof blog._id, "undefined");
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
