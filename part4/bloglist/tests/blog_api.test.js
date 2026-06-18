@@ -80,6 +80,18 @@ test("title and url are required", async () => {
   assert.strictEqual(response.body.length, helper.blogs.length);
 });
 
+test("delete a blog by its id", async () => {
+  const blogs = await Blog.find({});
+
+  const blogToDelete = blogs[0];
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const updatedBlogs = await Blog.find({});
+  assert.strictEqual(updatedBlogs.length, blogs.length - 1);
+
+  assert(!updatedBlogs.some((blog) => blog.id === blogToDelete.id));
+});
+
 after(async () => {
   await mongoose.connection.close();
 });

@@ -12,4 +12,9 @@ router.post("/", async (request, response) => {
   return response.status(201).json(savedBlog);
 });
 
+router.delete("/:id", async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id);
+  return response.status(204).end();
+});
+
 module.exports = router;
