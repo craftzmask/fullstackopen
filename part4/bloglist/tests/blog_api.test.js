@@ -92,6 +92,19 @@ test("delete a blog by its id", async () => {
   assert(!updatedBlogs.some((blog) => blog.id === blogToDelete.id));
 });
 
+test("a blog can be liked", async () => {
+  const blogs = await Blog.find({});
+  const blogToLike = blogs[0];
+
+  await api
+    .put(`/api/blogs/${blogToLike.id}`)
+    .send({ likes: blogToLike.likes + 1 })
+    .expect(200);
+
+  const updatedBlog = await Blog.findById(blogToLike.id);
+  assert.strictEqual(updatedBlog.likes, blogToLike.likes + 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
