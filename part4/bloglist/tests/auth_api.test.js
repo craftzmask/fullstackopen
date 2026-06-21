@@ -44,6 +44,38 @@ describe("Auth API", () => {
 
     assert.strictEqual(response.body.error, "User already exists");
   });
+
+  test("password must be at least 3 characters long", async () => {
+    const response = await api
+      .post("/api/users")
+      .send({
+        username: "testuser123",
+        password: "pw",
+        name: "Test User 123",
+      })
+      .expect(400);
+
+    assert.strictEqual(
+      response.body.error,
+      "Password must be at least 3 characters long",
+    );
+  });
+
+  test("username must be at least 3 characters long", async () => {
+    const response = await api
+      .post("/api/users")
+      .send({
+        username: "tu",
+        password: "password",
+        name: "Test User 123",
+      })
+      .expect(400);
+
+    assert.strictEqual(
+      response.body.error,
+      "Username must be at least 3 characters long",
+    );
+  });
 });
 
 after(async () => {
