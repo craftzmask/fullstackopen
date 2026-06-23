@@ -2,7 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./utils/config");
 const logger = require("./utils/logger");
-const { unknownEndpoint, errorHandler } = require("./utils/middleware");
+const {
+  unknownEndpoint,
+  errorHandler,
+  tokenExtractor,
+} = require("./utils/middleware");
 
 const app = express();
 
@@ -17,6 +21,7 @@ mongoose
 
 app.use(express.json());
 
+app.use(tokenExtractor);
 app.use("/api/blogs", blogRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
