@@ -33,7 +33,30 @@ router.post("/", async (request, response) => {
 });
 
 router.delete("/:id", async (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.JWT_SECRET);
+
+  if (!decodedToken || !decodedToken.id) {
+    return response.status(401).json({
+      error: "Token invalid",
+    });
+  }
+
+  const user = await User.findById(decodedToken.id);
+  if (!user) {
+    return response.status(400).json({
+      error: "User does not exist",
+    });
+  }
+
+  const blogToDelete = await Blog.findById(request.params.id);
+  if (blogToDelete.user.toString() !== user._id.toString()) {
+    return response.status(401).json({
+      error: "Unauthorized",
+    });
+  }
+
   await Blog.findByIdAndDelete(request.params.id);
+
   return response.status(204).end();
 });
 
