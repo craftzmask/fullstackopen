@@ -11,12 +11,6 @@ router.post("/", async (req, res) => {
       .json({ error: "Username and password are required" });
   }
 
-  if (username.length < 3) {
-    return res
-      .status(400)
-      .json({ error: "Username must be at least 3 characters long" });
-  }
-
   if (password.length < 3) {
     return res
       .status(400)
@@ -41,7 +35,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const users = await User.find({}).populate('blogs', { user: 0 });
+  const users = await User.find({}).populate("blogs", { user: 0 });
   res.json(users);
 });
 
