@@ -10,23 +10,34 @@ router.get("/", async (request, response) => {
 });
 
 router.post("/", userExtractor, async (request, response) => {
+  const user = request.user;
   const blog = new Blog({
-    user: request.user._id,
+    user: user._id,
     ...request.body,
   });
   const savedBlog = await blog.save();
+
+  user.blogs.push(savedBlog._id);
+  await user.save();
+
   return response.status(201).json(savedBlog);
 });
 
 router.delete("/:id", userExtractor, async (request, response) => {
-  const blogToDelete = await Blog.findById(request.params.id);
-  if (blogToDelete.user.toString() !== request.user._id.toString()) {
+  const user = request.user;
+
+  const blogId = request.params.id;
+  const blogToDelete = await Blog.findById(blogId);
+  if (blogToDelete.user.toString() !== user._id.toString()) {
     return response.status(401).json({
       error: "Unauthorized",
     });
   }
 
-  await Blog.findByIdAndDelete(request.params.id);
+  user.blogs = user.blogs.filter((id) => id.toString() !== blogId);
+  await user.save();
+
+  await Blog.findByIdAndDelete(blogId);
 
   return response.status(204).end();
 });
