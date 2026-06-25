@@ -3,15 +3,43 @@ const { test, after, describe, beforeEach } = require("node:test");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const helper = require("../utils/list_helper");
 const app = require("../app");
 
 const api = supertest(app);
 
+const testUser = {
+  username: "testuser1",
+  name: "Test User",
+  password: "password",
+};
+
+let userResponse;
+
 beforeEach(async () => {
   await Blog.deleteMany({});
   const promises = helper.blogs.map((blog) => new Blog(blog).save());
   await Promise.all(promises);
+
+  await User.deleteMany({});
+  await api
+    .post("/api/users")
+    .send(testUser)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  await api
+    .post("/api/users")
+    .send({ username: "test", password: "test", name: "test" })
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  userResponse = await api
+    .post("/api/login")
+    .send(testUser)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
 });
 
 describe("Blog API", () => {
@@ -43,6 +71,13 @@ describe("Blog API", () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
+      .expect(401)
+      .expect("Content-Type", /application\/json/);
+
+    await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${userResponse.body.token}`)
+      .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -60,8 +95,15 @@ describe("Blog API", () => {
       url: "https://test.com",
     };
 
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(401)
+      .expect("Content-Type", /application\/json/);
+
     const response = await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${userResponse.body.token}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -75,17 +117,61 @@ describe("Blog API", () => {
       likes: 5,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
-    const response = await api.get("/api/blogs");
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("Authorization", `Bearer ${userResponse.body.token}`)
+      .expect(400);
 
+    const response = await api.get("/api/blogs");
     assert.strictEqual(response.body.length, helper.blogs.length);
   });
 
   test("delete a blog by its id", async () => {
-    const blogs = await Blog.find({});
+    // User login
+    const author = await api
+      .post("/api/login")
+      .send(testUser)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
 
-    const blogToDelete = blogs[0];
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    // User create a new blog
+    const blog = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${author.body.token}`)
+      .send({
+        title: "Test Blog",
+        author: "Test Author",
+        url: "https://test.com",
+        likes: 5,
+      })
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const blogs = await Blog.find({});
+    const blogToDelete = blog.body;
+
+    // Someone else login
+    const other = await api
+      .post("/api/login")
+      .send({
+        username: "test",
+        password: "test",
+      })
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    // someone try to remove blog
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set("Authorization", `Bearer ${other.body.token}`)
+      .expect(401);
+
+    // Author removes blog
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set("Authorization", `Bearer ${author.body.token}`)
+      .expect(204);
 
     const updatedBlogs = await Blog.find({});
     assert.strictEqual(updatedBlogs.length, blogs.length - 1);

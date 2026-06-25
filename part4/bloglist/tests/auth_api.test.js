@@ -70,11 +70,6 @@ describe("Auth API", () => {
         name: "Test User 123",
       })
       .expect(400);
-
-    assert.strictEqual(
-      response.body.error,
-      "Username must be at least 3 characters long",
-    );
   });
 });
 

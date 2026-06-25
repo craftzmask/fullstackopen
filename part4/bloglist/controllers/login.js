@@ -20,6 +20,7 @@ router.post("/", async (request, response) => {
 
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
+    console.log("password not corrected");
     return response.status(401).json({
       error: "Password does not match",
     });
