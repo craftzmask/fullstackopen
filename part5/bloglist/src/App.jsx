@@ -12,6 +12,12 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
+
+    const cachedUser = localStorage.getItem("user");
+    if (cachedUser) {
+      const userObject = JSON.parse(cachedUser);
+      setUser(userObject);
+    }
   }, []);
 
   const handleLogin = async (e) => {
@@ -19,9 +25,17 @@ const App = () => {
     try {
       const userResponse = await loginService.login({ username, password });
       setUser(userResponse);
+      localStorage.setItem("user", JSON.stringify(userResponse));
+      setUsername("");
+      setPassword("");
     } catch (e) {
       console.error("Error message:", e);
     }
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
   };
 
   if (!user) {
@@ -42,7 +56,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <p>{user.name ?? user.username} logged in</p>
+      <p>
+        {user.name ?? user.username} logged in{" "}
+        <button onClick={logout}>logout</button>
+      </p>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
