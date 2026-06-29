@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Login from "./components/Login";
@@ -13,6 +14,8 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -30,11 +33,13 @@ const App = () => {
     try {
       const userResponse = await loginService.login({ username, password });
       setUser(userResponse);
+      blogService.setToken(userResponse.token);
       localStorage.setItem("user", JSON.stringify(userResponse));
       setUsername("");
       setPassword("");
-    } catch (e) {
-      console.error("Error message:", e);
+      notify(`Welcome back ${userResponse.name ?? userResponse.username}`);
+    } catch {
+      notify(`Wrong username or password`, "error");
     }
   };
 
@@ -42,21 +47,38 @@ const App = () => {
     setUser(null);
     localStorage.removeItem("user");
     blogService.setToken(null);
+    notify("See you again");
   };
 
   const handleAddBlog = async (e) => {
     e.preventDefault();
-    const savedBlog = await blogService.create({ title, author, url });
-    setBlogs(blogs.concat(savedBlog));
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    console.log("hello");
+    try {
+      const savedBlog = await blogService.create({ title, author, url });
+      setBlogs(blogs.concat(savedBlog));
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      notify(`Added ${savedBlog.title} succesfully`);
+    } catch (error) {
+      notify(error.response.data.error, "error");
+    }
+  };
+
+  const notify = (message, status = "success") => {
+    setMessage(message);
+    setStatus(status);
+    setTimeout(() => {
+      setMessage("");
+      setStatus("");
+    }, 5000);
   };
 
   if (!user) {
     return (
       <div>
         <h2>log in to application</h2>
+        <Notification message={message} status={status} />
         <Login
           onSubmit={handleLogin}
           username={username}
@@ -71,6 +93,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} status={status} />
       <p>
         {user.name ?? user.username} logged in{" "}
         <button onClick={logout}>logout</button>
