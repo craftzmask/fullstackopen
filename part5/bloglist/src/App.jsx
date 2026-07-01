@@ -25,6 +25,16 @@ const App = () => {
     }
   }, []);
 
+  const handleLike = async (blog) => {
+    try {
+      const likedBlog = await blogService.like(blog);
+      setBlogs(blogs.map((b) => (b.id === likedBlog.id ? likedBlog : b)));
+      handleNotify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
+    } catch (error) {
+      handleNotify(error.response.data.error, "error");
+    }
+  };
+
   const handleLogin = async (credentials) => {
     try {
       const userResponse = await loginService.login(credentials);
@@ -91,7 +101,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} onLikeClick={handleLike} />
       ))}
     </div>
   );
