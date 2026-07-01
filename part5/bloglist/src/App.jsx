@@ -58,7 +58,7 @@ const App = () => {
         `Welcome back ${userResponse.name ?? userResponse.username}`,
       );
     } catch {
-      handleNotify(`Wrong username or password`, "error");
+      handleNotify("Wrong username or password", "error");
     }
   };
 
