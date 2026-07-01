@@ -11,6 +11,8 @@ const Blog = ({ blog, onLikeClick }) => {
     marginBottom: 5,
   };
 
+  console.log(blog);
+
   return (
     <div style={blogStyle}>
       <div>
@@ -25,7 +27,7 @@ const Blog = ({ blog, onLikeClick }) => {
           likes {blog.likes}{" "}
           <button onClick={() => onLikeClick(blog)}>like</button>
         </div>
-        <div>{blog.author}</div>
+        <div>{blog.user?.name}</div>
       </div>
     </div>
   );

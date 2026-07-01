@@ -44,7 +44,9 @@ router.delete("/:id", userExtractor, async (request, response) => {
 
 router.put("/:id", async (request, response) => {
   const { id } = request.params;
-  const blog = await Blog.findByIdAndUpdate(id, request.body, { new: true });
+  const blog = await Blog.findByIdAndUpdate(id, request.body, {
+    new: true,
+  }).populate("user", { blogs: 0 });
   return response.json(blog);
 });
 
