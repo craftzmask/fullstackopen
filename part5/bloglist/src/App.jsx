@@ -9,12 +9,7 @@ import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const toggleRef = useRef();
@@ -30,44 +25,39 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (credentials) => {
     try {
-      const userResponse = await loginService.login({ username, password });
+      const userResponse = await loginService.login(credentials);
       setUser(userResponse);
       blogService.setToken(userResponse.token);
       localStorage.setItem("user", JSON.stringify(userResponse));
-      setUsername("");
-      setPassword("");
-      notify(`Welcome back ${userResponse.name ?? userResponse.username}`);
+      handleNotify(
+        `Welcome back ${userResponse.name ?? userResponse.username}`,
+      );
     } catch {
-      notify(`Wrong username or password`, "error");
+      handleNotify(`Wrong username or password`, "error");
     }
   };
 
-  const logout = () => {
+  const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("user");
     blogService.setToken(null);
-    notify("See you again");
+    handleNotify("See you again");
   };
 
-  const handleAddBlog = async (e) => {
-    e.preventDefault();
+  const handleAddBlog = async (blogObject) => {
     try {
-      const savedBlog = await blogService.create({ title, author, url });
+      const savedBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(savedBlog));
-      setTitle("");
-      setAuthor("");
-      setUrl("");
-      notify(`Added ${savedBlog.title} succesfully`);
+      handleNotify(`Added ${savedBlog.title} succesfully`);
       toggleRef.current.toggleVisibility();
     } catch (error) {
-      notify(error.response.data.error, "error");
+      handleNotify(error.response.data.error, "error");
     }
   };
 
-  const notify = (message, status = "success") => {
+  const handleNotify = (message, status = "success") => {
     setMessage(message);
     setStatus(status);
     setTimeout(() => {
@@ -81,13 +71,7 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
         <Notification message={message} status={status} />
-        <Login
-          onSubmit={handleLogin}
-          username={username}
-          onUsernameChange={(e) => setUsername(e.target.value)}
-          password={password}
-          onPasswordChange={(e) => setPassword(e.target.value)}
-        />
+        <Login onSubmit={handleLogin} />
       </div>
     );
   }
@@ -98,20 +82,12 @@ const App = () => {
       <Notification message={message} status={status} />
       <p>
         {user.name ?? user.username} logged in{" "}
-        <button onClick={logout}>logout</button>
+        <button onClick={handleLogout}>logout</button>
       </p>
 
       <h2>create new</h2>
       <Togglable label="create a blog" ref={toggleRef}>
-        <AddBlog
-          onSubmit={handleAddBlog}
-          title={title}
-          onTitleChange={(e) => setTitle(e.target.value)}
-          author={author}
-          onAuthorChange={(e) => setAuthor(e.target.value)}
-          url={url}
-          onUrlChange={(e) => setUrl(e.target.value)}
-        />
+        <AddBlog onSubmit={handleAddBlog} />
       </Togglable>
 
       {blogs.map((blog) => (
