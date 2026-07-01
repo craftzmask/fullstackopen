@@ -18,6 +18,10 @@ const errorHandler = (err, req, res, next) => {
     return res.status(401).send({
       error: err.message,
     });
+  } else if (err.name === "TokenExpiredError") {
+    return res.status(401).send({
+      error: err.message,
+    });
   }
 
   next(err);

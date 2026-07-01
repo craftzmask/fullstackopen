@@ -36,6 +36,18 @@ const App = () => {
     }
   };
 
+  const handleDelete = async (blog) => {
+    try {
+      if (confirm(`Deleted blog ${blog.title} by ${blog.author}?`)) {
+        await blogService.remove(blog.id);
+        setBlogs(blogs.filter((b) => b.id !== blog.id));
+        handleNotify(`Deleted ${blog.title} by ${blog.author}`);
+      }
+    } catch (error) {
+      handleNotify(error.response.data.error, "error");
+    }
+  };
+
   const handleLogin = async (credentials) => {
     try {
       const userResponse = await loginService.login(credentials);
@@ -102,7 +114,13 @@ const App = () => {
       </Togglable>
 
       {sortedBlogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} onLikeClick={handleLike} />
+        <Blog
+          user={user}
+          key={blog.id}
+          blog={blog}
+          onLikeClick={handleLike}
+          onDeleteClick={handleDelete}
+        />
       ))}
     </div>
   );
