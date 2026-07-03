@@ -13,7 +13,7 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
 
   console.log(blog);
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author}
         <button onClick={() => setShowDetail(!showDetail)}>
