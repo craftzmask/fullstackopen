@@ -4,7 +4,7 @@ import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Login from "./components/Login";
-import AddBlog from "./components/addBlog";
+import AddBlog from "./components/AddBlog";
 import Togglable from "./components/Togglable";
 
 const App = () => {

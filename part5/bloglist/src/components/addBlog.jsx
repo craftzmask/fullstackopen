@@ -22,6 +22,7 @@ const AddBlog = ({ onSubmit }) => {
       <div>
         title
         <input
+          className="title"
           type="text"
           value={title}
           onChange={(e) => onChange(e, setTitle)}
@@ -30,6 +31,7 @@ const AddBlog = ({ onSubmit }) => {
       <div>
         author
         <input
+          className="author"
           type="text"
           value={author}
           onChange={(e) => onChange(e, setAuthor)}
@@ -37,7 +39,12 @@ const AddBlog = ({ onSubmit }) => {
       </div>
       <div>
         url
-        <input type="text" value={url} onChange={(e) => onChange(e, setUrl)} />
+        <input
+          className="url"
+          type="text"
+          value={url}
+          onChange={(e) => onChange(e, setUrl)}
+        />
       </div>
       <button type="submit">create</button>
     </form>
