@@ -15,9 +15,16 @@ const blog = {
   likes: 7,
 };
 
+let blogComponent;
+let simulatorUser;
+let mockHandler;
+
 beforeEach(() => {
-  const mockHandler = vi.fn();
-  render(<Blog user={user} blog={blog} onLikeClick={mockHandler} />);
+  simulatorUser = userEvent.setup();
+  mockHandler = vi.fn();
+  blogComponent = render(
+    <Blog user={user} blog={blog} onLikeClick={mockHandler} />,
+  );
 });
 
 test("render blog", () => {
@@ -27,9 +34,21 @@ test("render blog", () => {
 });
 
 test("show url and likes when user click show button", async () => {
-  const user = userEvent.setup();
   const button = screen.getByText("show");
-  await user.click(button);
+  await simulatorUser.click(button);
   expect(screen.getByText(blog.url, { exact: false })).toBeVisible();
   expect(screen.getByText(blog.likes, { exact: false })).toBeVisible();
+});
+
+test("user can click like button twice once it shows", async () => {
+  const showButton = screen.getByText("show");
+  await simulatorUser.click(showButton);
+
+  const { container } = blogComponent;
+  const likeButton = container.querySelector(".like-button");
+
+  await simulatorUser.click(likeButton);
+  await simulatorUser.click(likeButton);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
 });
