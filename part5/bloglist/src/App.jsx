@@ -32,6 +32,7 @@ const App = () => {
       setBlogs(blogs.map((b) => (b.id === likedBlog.id ? likedBlog : b)));
       handleNotify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
     } catch (error) {
+      console.log(error);
       handleNotify(error.response.data.error, "error");
     }
   };

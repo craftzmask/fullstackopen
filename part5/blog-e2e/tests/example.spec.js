@@ -31,6 +31,7 @@ describe("Blog app", () => {
     await request.post("http://localhost:3003/api/users", {
       data: user,
     });
+
     await page.goto("http://localhost:5173");
   });
 
@@ -58,5 +59,21 @@ describe("Blog app", () => {
       page.getByText(`Added ${blog.title} succesfully`),
     ).toBeVisible();
     await expect(page.getByText(`${blog.title} ${blog.author}`)).toBeVisible();
+  });
+
+  test("a blog can be liked", async ({ page }) => {
+    await loginWith(page, user.username, user.password);
+    await page.getByRole("button", { name: "create a blog" }).click();
+
+    await createBlog(page, blog.title, blog.author, blog.url);
+    // await page.waitForTimeout(6000);
+
+    await page.getByRole("button", { name: "show" }).click();
+    await page.getByRole("button", { name: "like" }).click();
+
+    await page.getByText(`Liked ${blog.title} by ${blog.author}`).waitFor();
+    await expect(
+      page.getByText(`Liked ${blog.title} by ${blog.author}`),
+    ).toBeVisible();
   });
 });
