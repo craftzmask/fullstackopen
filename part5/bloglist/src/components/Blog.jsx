@@ -11,7 +11,7 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
     marginBottom: 5,
   };
 
-  console.log(blog);
+  console.log(user, blog);
   return (
     <div style={blogStyle} className="blog">
       <div>
@@ -29,8 +29,10 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
           </button>
         </div>
         <div>{blog.user?.name}</div>
-        {user.username === blog.user?.username && (
-          <button onClick={() => onDeleteClick(blog)}>remove</button>
+        {user.id === blog.user?.id && (
+          <button className="delete-button" onClick={() => onDeleteClick(blog)}>
+            remove
+          </button>
         )}
       </div>
     </div>

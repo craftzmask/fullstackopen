@@ -37,6 +37,7 @@ router.post("/", async (request, response) => {
 
   response.json({
     token,
+    id: user._id.toString(),
     username: user.username,
     name: user.name,
   });

@@ -29,9 +29,9 @@ router.post("/", async (req, res) => {
     password: passwordHash,
   });
 
-  await newUser.save();
+  const savedUser = await newUser.save();
 
-  res.status(201).json({ message: "User created successfully" });
+  res.status(201).json(savedUser);
 });
 
 router.get("/", async (req, res) => {

@@ -28,7 +28,7 @@ const blog = {
 describe("Blog app", () => {
   beforeEach(async ({ page, request }) => {
     await request.post("http://localhost:3003/api/testing/reset");
-    await request.post("http://localhost:3003/api/users", {
+    const response = await request.post("http://localhost:3003/api/users", {
       data: user,
     });
 
@@ -61,19 +61,28 @@ describe("Blog app", () => {
     await expect(page.getByText(`${blog.title} ${blog.author}`)).toBeVisible();
   });
 
-  test("a blog can be liked", async ({ page }) => {
-    await loginWith(page, user.username, user.password);
-    await page.getByRole("button", { name: "create a blog" }).click();
+  describe("when logged in", () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, user.username, user.password);
+      await page.getByRole("button", { name: "create a blog" }).click();
+      await createBlog(page, blog.title, blog.author, blog.url);
+      await page.getByRole("button", { name: "show" }).click();
+    });
 
-    await createBlog(page, blog.title, blog.author, blog.url);
-    // await page.waitForTimeout(6000);
+    test("a blog can be liked", async ({ page }) => {
+      await page.getByRole("button", { name: "like" }).click();
+      await expect(
+        page.getByText(`Liked ${blog.title} by ${blog.author}`),
+      ).toBeVisible();
+    });
 
-    await page.getByRole("button", { name: "show" }).click();
-    await page.getByRole("button", { name: "like" }).click();
-
-    await page.getByText(`Liked ${blog.title} by ${blog.author}`).waitFor();
-    await expect(
-      page.getByText(`Liked ${blog.title} by ${blog.author}`),
-    ).toBeVisible();
+    test("a blog can be remove by its owner", async ({ page }) => {
+      await page.getByRole("button", { name: "remove" }).click();
+      page.on("dialog", async (dialog) => await dialog.accept());
+      await page.getByRole("button", { name: "remove" }).click();
+      await expect(
+        page.getByText(`${blog.title} ${blog.author}`),
+      ).not.toBeVisible();
+    });
   });
 });

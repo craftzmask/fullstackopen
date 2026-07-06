@@ -18,7 +18,9 @@ router.post("/", userExtractor, async (request, response) => {
   const savedBlog = await blog.save();
 
   user.blogs.push(savedBlog._id);
-  await user.save();
+  const savedUser = await user.save();
+
+  savedBlog.user = savedUser;
 
   return response.status(201).json(savedBlog);
 });
@@ -43,6 +45,7 @@ router.delete("/:id", userExtractor, async (request, response) => {
 });
 
 router.put("/:id", async (request, response) => {
+  console.log(request.body);
   const { id } = request.params;
   const blog = await Blog.findByIdAndUpdate(id, request.body, {
     new: true,
