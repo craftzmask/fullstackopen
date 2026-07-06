@@ -1,18 +1,20 @@
-const Blogs = ({ user, blogs, onLikeClick, onDeleteClick }) => {
-  if (blogs.length === 0) {
-    return <p>No blogs has been created yet</p>;
-  }
+import { Link } from "react-router-dom";
+import Blog from "./Blog";
+
+const Blogs = ({ blogs }) => {
   return (
     <div>
-      {blogs.map((blog) => (
-        <Blog
-          user={user}
-          key={blog.id}
-          blog={blog}
-          onLikeClick={onLikeClick}
-          onDeleteClick={onDeleteClick}
-        />
-      ))}
+      <h2>blogs</h2>
+      {blogs.length === 0 && <p>No blogs has been created yet</p>}
+      <ul>
+        {blogs.map((b) => (
+          <li>
+            <Link key={b.id} to={`/blogs/${b.id}`}>
+              {b.title} by {b.author}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 import Blog from "./components/Blog";
-import Blogs from "./components/Blogs";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Login from "./components/Login";
 import AddBlog from "./components/AddBlog";
 import Togglable from "./components/Togglable";
+import Blogs from "./components/Blogs";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,7 +15,7 @@ const App = () => {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const toggleRef = useRef();
-  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+  const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +28,9 @@ const App = () => {
       blogService.setToken(userObject.token);
     }
   }, []);
+
+  const match = useMatch("/blogs/:id");
+  const blog = match ? sortedBlogs.find((b) => b.id === match.params.id) : null;
 
   const handleLike = async (blog) => {
     try {
@@ -112,22 +115,24 @@ const App = () => {
         )}
       </div>
 
-      <h2>blogs</h2>
       <Notification message={message} status={status} />
 
-      {/* <div>
+      {/*
+      <div>
         <h2>create new</h2>
         <Togglable label="create a blog" ref={toggleRef}>
           <AddBlog onSubmit={handleAddBlog} />
         </Togglable>
       </div> */}
+
       <Routes>
+        <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
         <Route
-          path="/"
+          path="/blogs/:id"
           element={
-            <Blogs
+            <Blog
               user={user}
-              blogs={sortedBlogs}
+              blog={blog}
               onLikeClick={handleLike}
               onDeleteClick={handleDelete}
             />

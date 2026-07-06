@@ -1,39 +1,26 @@
-import { useState } from "react";
-
 const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
-  const [showDetail, setShowDetail] = useState(false);
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
+  if (!blog) return null;
 
   return (
-    <div style={blogStyle} className="blog">
-      <div>
+    <div className="blog">
+      <h2>
         {blog.title} {blog.author}
-        <button onClick={() => setShowDetail(!showDetail)}>
-          {showDetail ? "hide" : "show"}
+      </h2>
+      <a href={blog.url}>{blog.url}</a>
+      <div>
+        likes {blog.likes}{" "}
+        <button onClick={() => onLikeClick(blog)} className="like-button">
+          like
         </button>
       </div>
-      <div style={{ display: showDetail ? "" : "none" }}>
-        <div>{blog.url}</div>
-        <div>
-          likes {blog.likes}{" "}
-          <button onClick={() => onLikeClick(blog)} className="like-button">
-            like
-          </button>
-        </div>
-        <div>{blog.user?.name}</div>
-        {user.id === blog.user?.id && (
-          <button className="delete-button" onClick={() => onDeleteClick(blog)}>
-            remove
-          </button>
-        )}
+      <div>
+        Added by <strong>{blog.user?.name}</strong>
       </div>
+      {user.id === blog.user?.id && (
+        <button className="delete-button" onClick={() => onDeleteClick(blog)}>
+          remove
+        </button>
+      )}
     </div>
   );
 };
