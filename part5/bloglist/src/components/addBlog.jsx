@@ -18,42 +18,45 @@ const AddBlog = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          title
-          <input
-            className="title"
-            type="text"
-            value={title}
-            onChange={(e) => onChange(e, setTitle)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          author
-          <input
-            className="author"
-            type="text"
-            value={author}
-            onChange={(e) => onChange(e, setAuthor)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          url
-          <input
-            className="url"
-            type="text"
-            value={url}
-            onChange={(e) => onChange(e, setUrl)}
-          />
-        </label>
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <div>
+      <h2>create a new blog</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            title
+            <input
+              className="title"
+              type="text"
+              value={title}
+              onChange={(e) => onChange(e, setTitle)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            author
+            <input
+              className="author"
+              type="text"
+              value={author}
+              onChange={(e) => onChange(e, setAuthor)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            url
+            <input
+              className="url"
+              type="text"
+              value={url}
+              onChange={(e) => onChange(e, setUrl)}
+            />
+          </label>
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </div>
   );
 };
 

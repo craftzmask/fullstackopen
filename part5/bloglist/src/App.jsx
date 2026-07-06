@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
@@ -14,7 +14,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
-  const toggleRef = useRef();
   const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes);
   const navigate = useNavigate();
 
@@ -83,7 +82,7 @@ const App = () => {
       const savedBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(savedBlog));
       handleNotify(`Added ${savedBlog.title} succesfully`);
-      toggleRef.current.toggleVisibility();
+      navigate("/");
     } catch (error) {
       handleNotify(error.response.data.error, "error");
     }
@@ -106,6 +105,9 @@ const App = () => {
         <Link style={padding} to="/">
           blogs
         </Link>
+        <Link style={padding} to="/create">
+          new blog
+        </Link>
         {user ? (
           <button onClick={handleLogout}>logout</button>
         ) : (
@@ -117,16 +119,9 @@ const App = () => {
 
       <Notification message={message} status={status} />
 
-      {/*
-      <div>
-        <h2>create new</h2>
-        <Togglable label="create a blog" ref={toggleRef}>
-          <AddBlog onSubmit={handleAddBlog} />
-        </Togglable>
-      </div> */}
-
       <Routes>
         <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
+        <Route path="/create" element={<AddBlog onSubmit={handleAddBlog} />} />
         <Route
           path="/blogs/:id"
           element={
