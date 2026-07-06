@@ -33,17 +33,12 @@ const blog = {
 
 describe("Blog app", () => {
   beforeEach(async ({ page, request }) => {
-    await request.post("http://localhost:3003/api/testing/reset");
-    const response = await request.post("http://localhost:3003/api/users", {
-      data: user,
-    });
+    await request.post("/api/testing/reset");
+    await request.post("/api/users", { data: user });
 
     // Second user for testing unauthorized
-    await request.post("http://localhost:3003/api/users", {
-      data: user1,
-    });
-
-    await page.goto("http://localhost:5173");
+    await request.post("/api/users", { data: user1 });
+    await page.goto("/");
   });
 
   test("login form is show", async ({ page }) => {
@@ -70,6 +65,28 @@ describe("Blog app", () => {
       page.getByText(`Added ${blog.title} succesfully`),
     ).toBeVisible();
     await expect(page.getByText(`${blog.title} ${blog.author}`)).toBeVisible();
+  });
+
+  test.only("blogs are sorted by their likes", async ({ page, request }) => {
+    await request.post("/api/testing/init");
+    await page.reload();
+    await loginWith(page, user.username, user.password);
+    await expect(page.getByText(`${user.name} logged in`)).toBeVisible();
+
+    await page.getByRole("button", { name: "show" }).first().waitFor();
+    const showButtonLocator = page.getByRole("button", { name: "show" });
+    while ((await showButtonLocator.count()) > 0) {
+      await showButtonLocator.first().click();
+    }
+
+    const likes = [];
+    const likeTexts = await page.getByText("likes ", { exact: false }).all();
+    for (const likeText of likeTexts) {
+      const stringNumber = (await likeText.textContent()).split(" ")[1];
+      likes.push(Number(stringNumber));
+    }
+
+    expect(likes).toEqual(likes.toSorted((a, b) => b - a));
   });
 
   describe("when logged in", () => {

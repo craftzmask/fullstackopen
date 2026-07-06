@@ -11,7 +11,6 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
     marginBottom: 5,
   };
 
-  console.log(user, blog);
   return (
     <div style={blogStyle} className="blog">
       <div>
