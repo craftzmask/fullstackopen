@@ -19,6 +19,12 @@ const user = {
   password: "test",
 };
 
+const user1 = {
+  name: "Hello World",
+  username: "helloworld",
+  password: "helloworld",
+};
+
 const blog = {
   title: "React patterns",
   author: "Michael Chan",
@@ -30,6 +36,11 @@ describe("Blog app", () => {
     await request.post("http://localhost:3003/api/testing/reset");
     const response = await request.post("http://localhost:3003/api/users", {
       data: user,
+    });
+
+    // Second user for testing unauthorized
+    await request.post("http://localhost:3003/api/users", {
+      data: user1,
     });
 
     await page.goto("http://localhost:5173");
@@ -83,6 +94,13 @@ describe("Blog app", () => {
       await expect(
         page.getByText(`${blog.title} ${blog.author}`),
       ).not.toBeVisible();
+    });
+
+    test("other cannot see the remove butotn", async ({ page }) => {
+      await page.getByRole("button", { name: "logout" }).click();
+      await loginWith(page, user1.username, user1.password);
+      await page.getByRole("button", { name: "show" }).click();
+      expect(page.getByRole("button", { name: "remove" })).not.toBeVisible();
     });
   });
 });
