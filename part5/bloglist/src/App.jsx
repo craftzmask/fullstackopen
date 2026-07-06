@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
+import Blogs from "./components/Blogs";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -14,6 +16,7 @@ const App = () => {
   const [status, setStatus] = useState("");
   const toggleRef = useRef();
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+  const navigate = useNavigate();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -58,6 +61,7 @@ const App = () => {
       handleNotify(
         `Welcome back ${userResponse.name ?? userResponse.username}`,
       );
+      navigate("/");
     } catch {
       handleNotify("Wrong username or password", "error");
     }
@@ -68,6 +72,7 @@ const App = () => {
     localStorage.removeItem("user");
     blogService.setToken(null);
     handleNotify("See you again");
+    navigate("/login");
   };
 
   const handleAddBlog = async (blogObject) => {
@@ -90,39 +95,46 @@ const App = () => {
     }, 5000);
   };
 
-  if (!user) {
-    return (
-      <div>
-        <h2>log in to application</h2>
-        <Notification message={message} status={status} />
-        <Login onSubmit={handleLogin} />
-      </div>
-    );
-  }
+  const padding = { padding: 5 };
 
   return (
     <div>
+      <div>
+        <Link style={padding} to="/">
+          blogs
+        </Link>
+        {user ? (
+          <button onClick={handleLogout}>logout</button>
+        ) : (
+          <Link style={padding} to="/login">
+            login
+          </Link>
+        )}
+      </div>
+
       <h2>blogs</h2>
       <Notification message={message} status={status} />
-      <p>
-        {user.name ?? user.username} logged in{" "}
-        <button onClick={handleLogout}>logout</button>
-      </p>
 
-      <h2>create new</h2>
-      <Togglable label="create a blog" ref={toggleRef}>
-        <AddBlog onSubmit={handleAddBlog} />
-      </Togglable>
-
-      {sortedBlogs.map((blog) => (
-        <Blog
-          user={user}
-          key={blog.id}
-          blog={blog}
-          onLikeClick={handleLike}
-          onDeleteClick={handleDelete}
+      {/* <div>
+        <h2>create new</h2>
+        <Togglable label="create a blog" ref={toggleRef}>
+          <AddBlog onSubmit={handleAddBlog} />
+        </Togglable>
+      </div> */}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Blogs
+              user={user}
+              blogs={sortedBlogs}
+              onLikeClick={handleLike}
+              onDeleteClick={handleDelete}
+            />
+          }
         />
-      ))}
+        <Route path="/login" element={<Login onSubmit={handleLogin} />} />
+      </Routes>
     </div>
   );
 };

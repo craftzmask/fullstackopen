@@ -16,30 +16,33 @@ const Login = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          username
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => onChange(e, setUsername)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => onChange(e, setPassword)}
-          />
-        </label>
-      </div>
+    <div>
+      <h2>log in to application</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            username
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => onChange(e, setUsername)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => onChange(e, setPassword)}
+            />
+          </label>
+        </div>
 
-      <button type="submit">Login</button>
-    </form>
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 };
 
