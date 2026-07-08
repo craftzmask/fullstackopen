@@ -14,7 +14,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
-  const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const App = () => {
   }, []);
 
   const match = useMatch("/blogs/:id");
-  const blog = match ? sortedBlogs.find((b) => b.id === match.params.id) : null;
+  const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
 
   const handleLike = async (blog) => {
     try {
@@ -120,7 +119,7 @@ const App = () => {
       <Notification message={message} status={status} />
 
       <Routes>
-        <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
+        <Route path="/" element={<Blogs blogs={blogs} />} />
         <Route path="/create" element={<AddBlog onSubmit={handleAddBlog} />} />
         <Route
           path="/blogs/:id"
