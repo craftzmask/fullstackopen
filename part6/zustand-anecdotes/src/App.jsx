@@ -10,7 +10,7 @@ const App = () => {
 
   useEffect(() => {
     anecdoteService.getAll().then((data) => initialize(data));
-  }, []);
+  }, [initialize]);
 
   return (
     <div>
