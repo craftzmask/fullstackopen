@@ -17,12 +17,18 @@ const useAnecdoteStore = create((set) => ({
         anecdotes: [...state.anecdotes, savedAnecdote],
       }));
     },
-    vote: (id) =>
+    vote: async (anecdote) => {
+      const savedAnecdote = await anecdoteService.update({
+        ...anecdote,
+        votes: anecdote.votes + 1,
+      });
+
       set((state) => ({
         anecdotes: state.anecdotes.map((a) =>
-          a.id === id ? { ...a, votes: a.votes + 1 } : a,
+          a.id === savedAnecdote.id ? savedAnecdote : a,
         ),
-      })),
+      }));
+    },
     filter: (value) => set(() => ({ filter: value })),
   },
 }));
