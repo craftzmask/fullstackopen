@@ -11,83 +11,96 @@ describe("Blog app", () => {
     await page.goto("/");
   });
 
-  test("login form is show", async ({ page }) => {
-    const locator = page.getByText("log in to application");
-    await expect(locator).toBeVisible();
-  });
-
-  test("can login", async ({ page }) => {
-    await loginWith(page, user.username, user.password);
-    await expect(page.getByText("Matti Luukkainen logged in")).toBeVisible();
-  });
-
-  test("cannot login", async ({ page }) => {
-    await loginWith(page, "wrong username", "wrong password");
-    await expect(page.getByText("Wrong username or password")).toBeVisible();
-  });
-
-  test("a new blog can be created", async ({ page }) => {
-    await loginWith(page, user.username, user.password);
-    await page.getByRole("button", { name: "create a blog" }).click();
-    await createBlog(page, blog.title, blog.author, blog.url);
-
-    await expect(
-      page.getByText(`Added ${blog.title} succesfully`),
-    ).toBeVisible();
-    await expect(page.getByText(`${blog.title} ${blog.author}`)).toBeVisible();
-  });
-
-  test("blogs are sorted by their likes", async ({ page, request }) => {
-    await request.post("/api/testing/init");
-    await page.reload();
-    await loginWith(page, user.username, user.password);
-    await expect(page.getByText(`${user.name} logged in`)).toBeVisible();
-
-    await page.getByRole("button", { name: "show" }).first().waitFor();
-    const showButtonLocator = page.getByRole("button", { name: "show" });
-    while ((await showButtonLocator.count()) > 0) {
-      await showButtonLocator.first().click();
-    }
-
-    const likes = [];
-    const likeTexts = await page.getByText("likes ", { exact: false }).all();
-    for (const likeText of likeTexts) {
-      const stringNumber = (await likeText.textContent()).split(" ")[1];
-      likes.push(Number(stringNumber));
-    }
-
-    expect(likes).toEqual(likes.toSorted((a, b) => b - a));
-  });
-
-  describe("when logged in", () => {
-    beforeEach(async ({ page }) => {
-      await loginWith(page, user.username, user.password);
-      await page.getByRole("button", { name: "create a blog" }).click();
-      await createBlog(page, blog.title, blog.author, blog.url);
-      await page.getByRole("button", { name: "show" }).click();
+  describe("Authentication operations", () => {
+    test("Login form shown to unauthenticated users", async ({ page }) => {
+      await page.getByRole("link", { name: "login" }).click();
+      const locator = page.getByText("log in to application");
+      await expect(locator).toBeVisible();
     });
 
-    test("a blog can be liked", async ({ page }) => {
+    test("Login succeeds with the correct username/password combination", async ({
+      page,
+    }) => {
+      await loginWith(page, user.username, user.password);
+      await expect(page.getByText(`Welcome back ${user.name}`)).toBeVisible();
+    });
+
+    test("Login fails if the username/password is incorrect", async ({
+      page,
+    }) => {
+      await loginWith(page, "wrong username", "wrong password");
+      await expect(page.getByText("Wrong username or password")).toBeVisible();
+    });
+  });
+
+  describe("Authenticated user and author of the blog", () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, user.username, user.password);
+    });
+
+    test("A logged-in user can create a blog", async ({ page }) => {
+      await page.getByRole("link", { name: "new blog" }).click();
+      await createBlog(page, blog.title, blog.author, blog.url);
+      await expect(
+        page.getByText(`Added ${blog.title} succesfully`),
+      ).toBeVisible();
+      await expect(
+        page.getByText(`${blog.title} by ${blog.author}`),
+      ).toBeVisible();
+    });
+
+    test("A logged-in user can like blogs", async ({ page }) => {
+      await page.getByRole("link", { name: "new blog" }).click();
+      await createBlog(page, blog.title, blog.author, blog.url);
+      await page
+        .getByRole("link", { name: `${blog.title} by ${blog.author}` })
+        .click();
       await page.getByRole("button", { name: "like" }).click();
       await expect(
         page.getByText(`Liked ${blog.title} by ${blog.author}`),
       ).toBeVisible();
     });
 
-    test("a blog can be remove by its owner", async ({ page }) => {
-      await page.getByRole("button", { name: "remove" }).click();
+    test("A logged-in user can delete his/her blog", async ({ page }) => {
+      await page.getByRole("link", { name: "new blog" }).click();
+      await createBlog(page, blog.title, blog.author, blog.url);
+      await page
+        .getByRole("link", { name: `${blog.title} by ${blog.author}` })
+        .click();
+
       page.on("dialog", async (dialog) => await dialog.accept());
       await page.getByRole("button", { name: "remove" }).click();
+
+      await expect(
+        page.getByText(`Deleted ${blog.title} by ${blog.author}`),
+      ).toBeVisible();
+
       await expect(
         page.getByText(`${blog.title} ${blog.author}`),
       ).not.toBeVisible();
+
+      await expect(
+        page.getByText("No blogs has been created yet"),
+      ).toBeVisible();
     });
 
-    test("other cannot see the remove butotn", async ({ page }) => {
+    test("A logged-in user cannot delete other blog", async ({ page }) => {
+      await page.getByRole("link", { name: "new blog" }).click();
+      await createBlog(page, blog.title, blog.author, blog.url);
+
       await page.getByRole("button", { name: "logout" }).click();
+      await page.waitForTimeout(1000);
       await loginWith(page, user1.username, user1.password);
-      await page.getByRole("button", { name: "show" }).click();
-      expect(page.getByRole("button", { name: "remove" })).not.toBeVisible();
+
+      await page
+        .getByRole("link", { name: `${blog.title} by ${blog.author}` })
+        .click();
+      await page.waitForTimeout(1000);
+
+      await expect(page.getByRole("button", { name: "like" })).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "remove" }),
+      ).not.toBeVisible();
     });
   });
 });

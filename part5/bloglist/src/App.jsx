@@ -48,6 +48,7 @@ const App = () => {
         setBlogs(blogs.filter((b) => b.id !== blog.id));
         handleNotify(`Deleted ${blog.title} by ${blog.author}`);
       }
+      navigate("/");
     } catch (error) {
       handleNotify(error.response.data.error, "error");
     }
@@ -104,9 +105,11 @@ const App = () => {
         <Link style={padding} to="/">
           blogs
         </Link>
-        <Link style={padding} to="/create">
-          new blog
-        </Link>
+        {user && (
+          <Link style={padding} to="/create">
+            new blog
+          </Link>
+        )}
         {user ? (
           <button onClick={handleLogout}>logout</button>
         ) : (
@@ -120,7 +123,12 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<Blogs blogs={blogs} />} />
-        <Route path="/create" element={<AddBlog onSubmit={handleAddBlog} />} />
+        {user && (
+          <Route
+            path="/create"
+            element={<AddBlog onSubmit={handleAddBlog} />}
+          />
+        )}
         <Route
           path="/blogs/:id"
           element={
