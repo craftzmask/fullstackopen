@@ -9,14 +9,16 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
       <a href={blog.url}>{blog.url}</a>
       <div>
         likes {blog.likes}{" "}
-        <button onClick={() => onLikeClick(blog)} className="like-button">
-          like
-        </button>
+        {user && (
+          <button onClick={() => onLikeClick(blog)} className="like-button">
+            like
+          </button>
+        )}
       </div>
       <div>
         Added by <strong>{blog.user?.name}</strong>
       </div>
-      {user.id === blog.user?.id && (
+      {user?.id === blog.user?.id && (
         <button className="delete-button" onClick={() => onDeleteClick(blog)}>
           remove
         </button>
