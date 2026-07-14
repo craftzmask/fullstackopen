@@ -6,8 +6,8 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Login from "./components/Login";
 import AddBlog from "./components/AddBlog";
-import Togglable from "./components/Togglable";
 import Blogs from "./components/Blogs";
+import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -97,27 +97,37 @@ const App = () => {
     }, 5000);
   };
 
-  const padding = { padding: 5 };
-
   return (
     <div>
-      <div>
-        <Link style={padding} to="/">
-          blogs
-        </Link>
-        {user && (
-          <Link style={padding} to="/create">
-            new blog
-          </Link>
-        )}
-        {user ? (
-          <button onClick={handleLogout}>logout</button>
-        ) : (
-          <Link style={padding} to="/login">
-            login
-          </Link>
-        )}
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/" sx={{ mr: "auto" }}>
+            <Typography variant="h6" component="h1">
+              Blog App
+            </Typography>
+          </Button>
+          <div>
+            <Button color="inherit" component={Link} to="/">
+              blogs
+            </Button>
+            <Button color="inherit" component={Link} to="/create">
+              new blog
+            </Button>
+
+            {!user && (
+              <Button color="inherit" component={Link} to="/login">
+                login
+              </Button>
+            )}
+
+            {user && (
+              <Button color="error" variant="contained" onClick={handleLogout}>
+                logout
+              </Button>
+            )}
+          </div>
+        </Toolbar>
+      </AppBar>
 
       <Notification message={message} status={status} />
 
