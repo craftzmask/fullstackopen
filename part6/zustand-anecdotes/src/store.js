@@ -2,7 +2,7 @@ import { create } from "zustand";
 import anecdoteService from "./services/anecdotes";
 
 /** Anecdote store */
-const asObject = (anecdote) => ({
+export const asObject = (anecdote) => ({
   content: anecdote,
   votes: 0,
 });
@@ -11,7 +11,10 @@ const useAnecdoteStore = create((set) => ({
   anecdotes: [],
   filter: "",
   actions: {
-    initialize: (anecdotes) => set(() => ({ anecdotes })),
+    initialize: async () => {
+      const anecdotes = await anecdoteService.getAll();
+      set(() => ({ anecdotes }));
+    },
     add: async (newAnecdote) => {
       const savedAnecdote = await anecdoteService.add(asObject(newAnecdote));
       set((state) => ({
@@ -74,3 +77,5 @@ export const useNotificationMessage = () => {
 export const useNotificationActions = () => {
   return useNotificationStore((state) => state.actions);
 };
+
+export default useAnecdoteStore;
