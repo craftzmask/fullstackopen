@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import anecdoteService from "./services/anecdotes";
 
+/** Anecdote store */
 const asObject = (anecdote) => ({
   content: anecdote,
   votes: 0,
@@ -46,3 +47,24 @@ export const useAnecdotes = () => {
 
 export const useAnecdoteActions = () =>
   useAnecdoteStore((state) => state.actions);
+
+/** Notification store */
+const useNotificationStore = create((set) => ({
+  message: "",
+  actions: {
+    notify: (message, duration) => {
+      set(() => ({ message }));
+      setTimeout(() => {
+        set(() => ({ message: "" }));
+      }, duration);
+    },
+  },
+}));
+
+export const useNotificationMessage = () => {
+  return useNotificationStore((state) => state.message);
+};
+
+export const useNotificationActions = () => {
+  return useNotificationStore((state) => state.actions);
+};

@@ -47,8 +47,13 @@
     },
     {
       "content": "I wanna test out",
-      "votes": 2,
+      "votes": 3,
       "id": "Hn3o_RYZK60"
+    },
+    {
+      "content": "Hello",
+      "votes": 0,
+      "id": "T5-BA6Jp26I"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
