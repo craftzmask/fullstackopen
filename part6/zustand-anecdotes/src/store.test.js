@@ -17,6 +17,24 @@ import useAnecdoteStore, {
   useAnecdoteActions,
 } from "./store";
 
+const mockAnecdotes = [
+  {
+    content: "If it hurts, do it more often",
+    id: "47145",
+    votes: 1,
+  },
+  {
+    content: "Adding manpower to a late software project makes it later!",
+    id: "21149",
+    votes: 2,
+  },
+  {
+    content: "Premature optimization is the root of all evil.",
+    id: "21149",
+    votes: 3,
+  },
+];
+
 beforeEach(() => {
   useAnecdoteStore.setState({ anecdotes: [], filter: "" });
   vi.clearAllMocks();
@@ -38,23 +56,6 @@ describe("useAnecdoteStore", () => {
   });
 
   it("anecdotes are sorted by votes", async () => {
-    const mockAnecdotes = [
-      {
-        content: "If it hurts, do it more often",
-        id: "47145",
-        votes: 1,
-      },
-      {
-        content: "Adding manpower to a late software project makes it later!",
-        id: "21149",
-        votes: 2,
-      },
-      {
-        content: "Premature optimization is the root of all evil.",
-        id: "21149",
-        votes: 3,
-      },
-    ];
     anecdoteService.getAll.mockResolvedValue(mockAnecdotes);
 
     const { result } = renderHook(() => useAnecdoteActions());
@@ -67,5 +68,17 @@ describe("useAnecdoteStore", () => {
     expect(anecdoteResults.current).toEqual(
       mockAnecdotes.toSorted((a, b) => b.votes - a.votes),
     );
+  });
+
+  it("receives a properly filtered list of anecdotes", async () => {
+    anecdoteService.getAll.mockResolvedValue(mockAnecdotes);
+    const { result } = renderHook(() => useAnecdoteActions());
+    await act(async () => {
+      await result.current.initialize();
+      result.current.filter("optimization");
+    });
+
+    const { result: anecdoteResults } = renderHook(() => useAnecdotes());
+    expect(anecdoteResults.current).toEqual([mockAnecdotes[2]]);
   });
 });
