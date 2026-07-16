@@ -36,4 +36,36 @@ describe("useAnecdoteStore", () => {
     const { result: anecdoteResults } = renderHook(() => useAnecdotes());
     expect(anecdoteResults.current).toEqual(mockAnecdotes);
   });
+
+  it("anecdotes are sorted by votes", async () => {
+    const mockAnecdotes = [
+      {
+        content: "If it hurts, do it more often",
+        id: "47145",
+        votes: 1,
+      },
+      {
+        content: "Adding manpower to a late software project makes it later!",
+        id: "21149",
+        votes: 2,
+      },
+      {
+        content: "Premature optimization is the root of all evil.",
+        id: "21149",
+        votes: 3,
+      },
+    ];
+    anecdoteService.getAll.mockResolvedValue(mockAnecdotes);
+
+    const { result } = renderHook(() => useAnecdoteActions());
+
+    await act(async () => {
+      await result.current.initialize();
+    });
+
+    const { result: anecdoteResults } = renderHook(() => useAnecdotes());
+    expect(anecdoteResults.current).toEqual(
+      mockAnecdotes.toSorted((a, b) => b.votes - a.votes),
+    );
+  });
 });

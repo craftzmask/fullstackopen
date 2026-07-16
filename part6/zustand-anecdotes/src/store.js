@@ -47,11 +47,14 @@ export const useAnecdotes = () => {
   const anecdotes = useAnecdoteStore((state) => state.anecdotes);
   const filter = useAnecdoteStore((state) => state.filter);
 
-  return filter && filter.length > 0
-    ? anecdotes.filter((a) =>
-        a.content.toLowerCase().includes(filter.toLowerCase()),
-      )
-    : anecdotes;
+  const anecdotesToReturn =
+    filter && filter.length > 0
+      ? anecdotes.filter((a) =>
+          a.content.toLowerCase().includes(filter.toLowerCase()),
+        )
+      : anecdotes;
+
+  return anecdotesToReturn.toSorted((a, b) => b.votes - a.votes);
 };
 
 export const useAnecdoteActions = () =>
