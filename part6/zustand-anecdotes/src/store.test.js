@@ -11,11 +11,7 @@ vi.mock("./services/anecdotes", () => ({
 }));
 
 import anecdoteService from "./services/anecdotes";
-import useAnecdoteStore, {
-  asObject,
-  useAnecdotes,
-  useAnecdoteActions,
-} from "./store";
+import useAnecdoteStore, { useAnecdotes, useAnecdoteActions } from "./store";
 
 const mockAnecdotes = [
   {
@@ -35,29 +31,14 @@ const mockAnecdotes = [
   },
 ];
 
-beforeEach(() => {
-  useAnecdoteStore.setState({ anecdotes: [], filter: "" });
-  vi.clearAllMocks();
-});
-
 describe("useAnecdoteStore", () => {
-  it("initialize anecdotes from service", async () => {
-    const mockAnecdotes = [asObject("If it hurts, do it more often")];
-    anecdoteService.getAll.mockResolvedValue(mockAnecdotes);
-
-    const { result } = renderHook(() => useAnecdoteActions());
-
-    await act(async () => {
-      await result.current.initialize();
-    });
-
-    const { result: anecdoteResults } = renderHook(() => useAnecdotes());
-    expect(anecdoteResults.current).toEqual(mockAnecdotes);
+  beforeEach(() => {
+    useAnecdoteStore.setState({ anecdotes: [], filter: "" });
+    vi.clearAllMocks();
   });
 
-  it("anecdotes are sorted by votes", async () => {
+  it("initialize and check anecdotes are sorted by votes", async () => {
     anecdoteService.getAll.mockResolvedValue(mockAnecdotes);
-
     const { result } = renderHook(() => useAnecdoteActions());
 
     await act(async () => {
@@ -69,16 +50,35 @@ describe("useAnecdoteStore", () => {
       mockAnecdotes.toSorted((a, b) => b.votes - a.votes),
     );
   });
+});
+
+describe("filtering", () => {
+  beforeEach(() => {
+    useAnecdoteStore.setState({ anecdotes: mockAnecdotes, filter: "" });
+    vi.clearAllMocks();
+  });
+
+  const filter = (value) => {
+    const { result } = renderHook(() => useAnecdoteActions());
+    act(() => result.current.filter(value));
+  };
+
+  const getResult = () => {
+    const { result } = renderHook(() => useAnecdotes());
+    return result;
+  };
+
+  it("return all without filter", async () => {
+    expect(getResult().current).toHaveLength(mockAnecdotes.length);
+  });
 
   it("receives a properly filtered list of anecdotes", async () => {
-    anecdoteService.getAll.mockResolvedValue(mockAnecdotes);
-    const { result } = renderHook(() => useAnecdoteActions());
-    await act(async () => {
-      await result.current.initialize();
-      result.current.filter("optimization");
-    });
+    filter("optimization");
+    expect(getResult().current).toEqual([mockAnecdotes[2]]);
+  });
 
-    const { result: anecdoteResults } = renderHook(() => useAnecdotes());
-    expect(anecdoteResults.current).toEqual([mockAnecdotes[2]]);
+  it("return empty array when no filter match", async () => {
+    filter("123");
+    expect(getResult().current).toHaveLength(0);
   });
 });
