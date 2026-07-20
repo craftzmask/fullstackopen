@@ -4,8 +4,11 @@ import {
   getAnecdotes,
   updateAnecdote,
 } from "../services/anecdotes";
+import { useContext } from "react";
+import NotificationContext from "../NotificationContext";
 
 export const useAnecdotes = () => {
+  const { setNotification } = useContext(NotificationContext);
   const client = useQueryClient();
 
   const { isPending, isError, data } = useQuery({
@@ -26,6 +29,12 @@ export const useAnecdotes = () => {
     mutationFn: createAnecdote,
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ["anecdotes"] });
+    },
+    onError: () => {
+      setNotification("too short anecdote, must have length 5 or more");
+      setTimeout(() => {
+        setNotification("");
+      }, 5000);
     },
   });
 
