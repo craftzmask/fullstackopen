@@ -29,7 +29,13 @@ export const useAnecdotes = () => {
     anecdoteService.getAll().then((data) => setAnecdotes(data));
   }, []);
 
+  const addAnecdote = async (anecdote) => {
+    const addedAnecdote = await anecdoteService.createNew(anecdote);
+    setAnecdotes(anecdotes.concat(addedAnecdote));
+  };
+
   return {
     anecdotes,
+    addAnecdote,
   };
 };
