@@ -34,8 +34,16 @@ export const useAnecdotes = () => {
     setAnecdotes(anecdotes.concat(addedAnecdote));
   };
 
+  const deleteAnecdote = async (anecdote) => {
+    if (confirm(`Are you sure to delete ${anecdote.content}`)) {
+      await anecdoteService.remove(anecdote);
+      setAnecdotes(anecdotes.filter((a) => a.id !== anecdote.id));
+    }
+  };
+
   return {
     anecdotes,
     addAnecdote,
+    deleteAnecdote,
   };
 };
