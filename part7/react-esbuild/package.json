@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "esbuild src/main.jsx --bundle --minify --outfile=dist/main.js --jsx=automatic",
+    "build": "esbuild src/main.jsx --bundle --minify --sourcemap --outfile=dist/main.js --jsx=automatic",
     "serve": "npx serve dist"
   },
   "dependencies": {
