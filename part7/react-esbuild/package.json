@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build": "esbuild src/main.jsx --bundle --outfile=dist/main.js --jsx=automatic",
+    "serve": "npx serve dist"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}
