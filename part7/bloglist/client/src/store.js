@@ -49,3 +49,14 @@ export const useBlogStore = create((set) => ({
 }));
 
 export const useBlogActions = () => useBlogStore((state) => state.actions);
+
+/** User Store */
+export const useUserStore = create((set) => ({
+  user: null,
+  actions: {
+    setUser: (user) => set(() => ({ user })),
+    clearUser: () => set(() => ({ user: null })),
+  },
+}));
+
+export const useUserActions = () => useUserStore((state) => state.actions);

@@ -16,10 +16,17 @@ import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { useBlogActions, useBlogStore, useNotifcationActions } from "./store";
+import {
+  useBlogActions,
+  useBlogStore,
+  useNotifcationActions,
+  useUserStore,
+  useUserActions,
+} from "./store";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const { user } = useUserStore();
+  const { setUser, clearUser } = useUserActions();
   const { notify } = useNotifcationActions();
   const { blogs } = useBlogStore();
   const { intializeBlogs } = useBlogActions();
@@ -34,7 +41,7 @@ const App = () => {
       setUser(userObject);
       blogService.setToken(userObject.token);
     }
-  }, [intializeBlogs]);
+  }, [intializeBlogs, setUser]);
 
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
@@ -53,7 +60,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    setUser(null);
+    clearUser();
     localStorage.removeItem("user");
     blogService.setToken(null);
     notify("See you again");
