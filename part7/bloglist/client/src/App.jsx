@@ -16,16 +16,17 @@ import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { useNotifcationActions } from "./store";
+import { useBlogActions, useBlogStore, useNotifcationActions } from "./store";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
   const { notify } = useNotifcationActions();
+  const { blogs } = useBlogStore();
+  const { intializeBlogs, createBlog } = useBlogActions();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    intializeBlogs();
 
     const cachedUser = localStorage.getItem("user");
     if (cachedUser) {
@@ -33,7 +34,7 @@ const App = () => {
       setUser(userObject);
       blogService.setToken(userObject.token);
     }
-  }, []);
+  }, [intializeBlogs]);
 
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
@@ -85,9 +86,8 @@ const App = () => {
 
   const handleAddBlog = async (blogObject) => {
     try {
-      const savedBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(savedBlog));
-      notify(`Added ${savedBlog.title} succesfully`);
+      const newBlog = await createBlog(blogObject);
+      notify(`Added ${newBlog.title} succesfully`);
       navigate("/");
     } catch (error) {
       notify(error.response.data.error, "error");
