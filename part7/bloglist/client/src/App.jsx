@@ -16,13 +16,13 @@ import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { useNotifcationActions } from "./store";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
   const navigate = useNavigate();
+  const { notify } = useNotifcationActions();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -42,10 +42,10 @@ const App = () => {
     try {
       const likedBlog = await blogService.like(blog);
       setBlogs(blogs.map((b) => (b.id === likedBlog.id ? likedBlog : b)));
-      handleNotify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
+      notify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
     } catch (error) {
       console.log(error);
-      handleNotify(error.response.data.error, "error");
+      notify(error.response.data.error, "error");
     }
   };
 
@@ -54,11 +54,11 @@ const App = () => {
       if (confirm(`Deleted blog ${blog.title} by ${blog.author}?`)) {
         await blogService.remove(blog.id);
         setBlogs(blogs.filter((b) => b.id !== blog.id));
-        handleNotify(`Deleted ${blog.title} by ${blog.author}`);
+        notify(`Deleted ${blog.title} by ${blog.author}`);
       }
       navigate("/");
     } catch (error) {
-      handleNotify(error.response.data.error, "error");
+      notify(error.response.data.error, "error");
     }
   };
 
@@ -68,12 +68,10 @@ const App = () => {
       setUser(userResponse);
       blogService.setToken(userResponse.token);
       localStorage.setItem("user", JSON.stringify(userResponse));
-      handleNotify(
-        `Welcome back ${userResponse.name ?? userResponse.username}`,
-      );
+      notify(`Welcome back ${userResponse.name ?? userResponse.username}`);
       navigate("/");
     } catch {
-      handleNotify("Wrong username or password", "error");
+      notify("Wrong username or password", "error");
     }
   };
 
@@ -81,7 +79,7 @@ const App = () => {
     setUser(null);
     localStorage.removeItem("user");
     blogService.setToken(null);
-    handleNotify("See you again");
+    notify("See you again");
     navigate("/login");
   };
 
@@ -89,20 +87,11 @@ const App = () => {
     try {
       const savedBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(savedBlog));
-      handleNotify(`Added ${savedBlog.title} succesfully`);
+      notify(`Added ${savedBlog.title} succesfully`);
       navigate("/");
     } catch (error) {
-      handleNotify(error.response.data.error, "error");
+      notify(error.response.data.error, "error");
     }
-  };
-
-  const handleNotify = (message, status = "success") => {
-    setMessage(message);
-    setStatus(status);
-    setTimeout(() => {
-      setMessage("");
-      setStatus("");
-    }, 5000);
   };
 
   return (
@@ -137,7 +126,7 @@ const App = () => {
         </Toolbar>
       </AppBar>
 
-      <Notification message={message} status={status} />
+      <Notification />
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Blogs blogs={blogs} />} />
