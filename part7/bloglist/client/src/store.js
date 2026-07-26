@@ -39,6 +39,12 @@ export const useBlogStore = create((set) => ({
       }));
       return likedBlog;
     },
+    deleteBlog: async (blog) => {
+      await blogService.remove(blog.id);
+      set((state) => ({
+        blogs: state.blogs.filter((b) => b.id !== blog.id),
+      }));
+    },
   },
 }));
 

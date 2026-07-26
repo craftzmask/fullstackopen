@@ -39,30 +39,6 @@ const App = () => {
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
 
-  const handleLike = async (blog) => {
-    try {
-      const likedBlog = await blogService.like(blog);
-      setBlogs(blogs.map((b) => (b.id === likedBlog.id ? likedBlog : b)));
-      notify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
-    } catch (error) {
-      console.log(error);
-      notify(error.response.data.error, "error");
-    }
-  };
-
-  const handleDelete = async (blog) => {
-    try {
-      if (confirm(`Deleted blog ${blog.title} by ${blog.author}?`)) {
-        await blogService.remove(blog.id);
-        setBlogs(blogs.filter((b) => b.id !== blog.id));
-        notify(`Deleted ${blog.title} by ${blog.author}`);
-      }
-      navigate("/");
-    } catch (error) {
-      notify(error.response.data.error, "error");
-    }
-  };
-
   const handleLogin = async (credentials) => {
     try {
       const userResponse = await loginService.login(credentials);
@@ -121,17 +97,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Blogs blogs={blogs} />} />
           {user && <Route path="/create" element={<AddBlog />} />}
-          <Route
-            path="/blogs/:id"
-            element={
-              <Blog
-                user={user}
-                blog={blog}
-                onLikeClick={handleLike}
-                onDeleteClick={handleDelete}
-              />
-            }
-          />
+          <Route path="/blogs/:id" element={<Blog user={user} blog={blog} />} />
           <Route
             path="/login"
             element={

@@ -5,8 +5,36 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { useBlogActions, useNotifcationActions } from "../store";
+import { useNavigate } from "react-router-dom";
 
-const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
+const Blog = ({ user, blog }) => {
+  const { likeBlog, deleteBlog } = useBlogActions();
+  const { notify } = useNotifcationActions();
+  const navigate = useNavigate();
+
+  const handleLike = async (blog) => {
+    try {
+      const likedBlog = await likeBlog(blog);
+      notify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
+    } catch (error) {
+      console.log(error);
+      notify(error.response.data.error, "error");
+    }
+  };
+
+  const handleDelete = async (blog) => {
+    try {
+      if (confirm(`Deleted blog ${blog.title} by ${blog.author}?`)) {
+        await deleteBlog(blog);
+        notify(`Deleted ${blog.title} by ${blog.author}`);
+        navigate("/");
+      }
+    } catch (error) {
+      notify(error.response.data.error, "error");
+    }
+  };
+
   if (!blog) return null;
 
   return (
@@ -39,7 +67,7 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
           <Button
             variant="contained"
             className="like-button"
-            onClick={() => onLikeClick(blog)}
+            onClick={() => handleLike(blog)}
           >
             Like
           </Button>
@@ -50,7 +78,7 @@ const Blog = ({ user, blog, onLikeClick, onDeleteClick }) => {
             variant="outlined"
             color="error"
             className="delete-button"
-            onClick={() => onDeleteClick(blog)}
+            onClick={() => handleDelete(blog)}
           >
             Remove
           </Button>
