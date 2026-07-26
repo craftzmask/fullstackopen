@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -130,28 +131,33 @@ const App = () => {
       </AppBar>
 
       <Notification message={message} status={status} />
-
-      <Routes>
-        <Route path="/" element={<Blogs blogs={blogs} />} />
-        {user && (
-          <Route
-            path="/create"
-            element={<AddBlog onSubmit={handleAddBlog} />}
-          />
-        )}
-        <Route
-          path="/blogs/:id"
-          element={
-            <Blog
-              user={user}
-              blog={blog}
-              onLikeClick={handleLike}
-              onDeleteClick={handleDelete}
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Blogs blogs={blogs} />} />
+          {user && (
+            <Route
+              path="/create"
+              element={
+                <ErrorBoundary>
+                  <AddBlog onSubmit={handleAddBlog} />
+                </ErrorBoundary>
+              }
             />
-          }
-        />
-        <Route path="/login" element={<Login onSubmit={handleLogin} />} />
-      </Routes>
+          )}
+          <Route
+            path="/blogs/:id"
+            element={
+              <Blog
+                user={user}
+                blog={blog}
+                onLikeClick={handleLike}
+                onDeleteClick={handleDelete}
+              />
+            }
+          />
+          <Route path="/login" element={<Login onSubmit={handleLogin} />} />
+        </Routes>
+      </ErrorBoundary>
     </div>
   );
 };
