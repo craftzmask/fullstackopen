@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useMatch,
+  Navigate,
+} from "react-router-dom";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
@@ -155,7 +162,17 @@ const App = () => {
               />
             }
           />
-          <Route path="/login" element={<Login onSubmit={handleLogin} />} />
+          <Route
+            path="/login"
+            element={
+              user ? (
+                <Navigate to="/" replace={true} />
+              ) : (
+                <Login onSubmit={handleLogin} />
+              )
+            }
+          />
+          <Route path="*" element={<h2>404 - Page Not found</h2>} />
         </Routes>
       </ErrorBoundary>
     </div>
