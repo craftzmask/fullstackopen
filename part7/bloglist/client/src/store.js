@@ -32,6 +32,13 @@ export const useBlogStore = create((set) => ({
       set((state) => ({ blogs: state.blogs.concat(newBlog) }));
       return newBlog;
     },
+    likeBlog: async (blog) => {
+      const likedBlog = await blogService.like(blog);
+      set((state) => ({
+        blogs: state.blogs.map((b) => (b.id === likedBlog.id ? likedBlog : b)),
+      }));
+      return likedBlog;
+    },
   },
 }));
 

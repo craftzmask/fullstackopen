@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { TextField, Button } from "@mui/material";
+import { useBlogActions, useNotifcationActions } from "../store";
+import { useNavigate } from "react-router-dom";
 
-const AddBlog = ({ onSubmit }) => {
+const AddBlog = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const { notify } = useNotifcationActions();
+  const { createBlog } = useBlogActions();
+  const navigate = useNavigate();
 
   const onChange = (e, callback) => {
     callback(e.target.value);
@@ -12,10 +17,16 @@ const AddBlog = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onSubmit({ title, author, url });
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    try {
+      const newBlog = await createBlog({ title, author, url });
+      notify(`Added ${newBlog.title} succesfully`);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      navigate("/");
+    } catch (error) {
+      notify(error.response.data.error, "error");
+    }
   };
 
   return (

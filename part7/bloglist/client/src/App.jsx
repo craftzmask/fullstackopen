@@ -22,7 +22,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const { notify } = useNotifcationActions();
   const { blogs } = useBlogStore();
-  const { intializeBlogs, createBlog } = useBlogActions();
+  const { intializeBlogs } = useBlogActions();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,16 +84,6 @@ const App = () => {
     navigate("/login");
   };
 
-  const handleAddBlog = async (blogObject) => {
-    try {
-      const newBlog = await createBlog(blogObject);
-      notify(`Added ${newBlog.title} succesfully`);
-      navigate("/");
-    } catch (error) {
-      notify(error.response.data.error, "error");
-    }
-  };
-
   return (
     <div>
       <AppBar position="static">
@@ -130,16 +120,7 @@ const App = () => {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Blogs blogs={blogs} />} />
-          {user && (
-            <Route
-              path="/create"
-              element={
-                <ErrorBoundary>
-                  <AddBlog onSubmit={handleAddBlog} />
-                </ErrorBoundary>
-              }
-            />
-          )}
+          {user && <Route path="/create" element={<AddBlog />} />}
           <Route
             path="/blogs/:id"
             element={
