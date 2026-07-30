@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Routes,
   Route,
@@ -19,15 +19,15 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import {
   useBlogActions,
   useBlogStore,
-  useNotifcationActions,
   useUserStore,
   useUserActions,
 } from "./store";
+import { useNotificationDispatch } from "./context/NotificationContext";
 
 const App = () => {
   const { user } = useUserStore();
   const { setUser, clearUser } = useUserActions();
-  const { notify } = useNotifcationActions();
+  const notify = useNotificationDispatch();
   const { blogs } = useBlogStore();
   const { intializeBlogs } = useBlogActions();
   const navigate = useNavigate();
