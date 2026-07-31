@@ -7,14 +7,14 @@ import loginService from "./services/login";
 import Login from "./components/Login";
 import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
-import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { useUserStore, useUserActions } from "./store";
 import { useNotificationDispatch } from "./context/NotificationContext";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   const { user } = useUserStore();
-  const { setUser, clearUser } = useUserActions();
+  const { setUser } = useUserActions();
   const notify = useNotificationDispatch();
   const navigate = useNavigate();
 
@@ -40,46 +40,9 @@ const App = () => {
     }
   };
 
-  const handleLogout = () => {
-    clearUser();
-    localStorage.removeItem("user");
-    blogService.setToken(null);
-    notify("See you again");
-    navigate("/login");
-  };
-
   return (
     <div>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color="inherit" component={Link} to="/" sx={{ mr: "auto" }}>
-            <Typography variant="h6" component="h1">
-              Blog App
-            </Typography>
-          </Button>
-          <div>
-            <Button color="inherit" component={Link} to="/">
-              blogs
-            </Button>
-            <Button color="inherit" component={Link} to="/create">
-              new blog
-            </Button>
-
-            {!user && (
-              <Button color="inherit" component={Link} to="/login">
-                login
-              </Button>
-            )}
-
-            {user && (
-              <Button color="error" variant="contained" onClick={handleLogout}>
-                logout
-              </Button>
-            )}
-          </div>
-        </Toolbar>
-      </AppBar>
-
+      <Navbar />
       <Notification />
       <ErrorBoundary>
         <Routes>
