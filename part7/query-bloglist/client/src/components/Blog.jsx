@@ -6,13 +6,20 @@ import {
   Typography,
 } from "@mui/material";
 import { useBlogActions } from "../store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useNotificationDispatch } from "../context/NotificationContext";
+import { useBlogs } from "../hooks/useBlogs";
 
-const Blog = ({ user, blog }) => {
+const Blog = ({ user }) => {
+  const { blogs, isPending } = useBlogs();
   const { likeBlog, deleteBlog } = useBlogActions();
   const notify = useNotificationDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  if (isPending) return null;
+
+  const blog = blogs.find((b) => b.id === id);
 
   const handleLike = async (blog) => {
     try {

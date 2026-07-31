@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import { useBlogs } from "../hooks/useBlogs";
 
-const Blogs = ({ blogs }) => {
+const Blogs = () => {
+  const { blogs, isPending } = useBlogs();
+
+  if (isPending) return null;
+
   return (
     <div>
       <h2>blogs</h2>

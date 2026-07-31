@@ -1,12 +1,5 @@
 import { useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  useMatch,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
@@ -16,35 +9,23 @@ import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import ErrorBoundary from "./components/ErrorBoundary";
-import {
-  useBlogActions,
-  useBlogStore,
-  useUserStore,
-  useUserActions,
-} from "./store";
+import { useUserStore, useUserActions } from "./store";
 import { useNotificationDispatch } from "./context/NotificationContext";
 
 const App = () => {
   const { user } = useUserStore();
   const { setUser, clearUser } = useUserActions();
   const notify = useNotificationDispatch();
-  const { blogs } = useBlogStore();
-  const { intializeBlogs } = useBlogActions();
   const navigate = useNavigate();
 
   useEffect(() => {
-    intializeBlogs();
-
     const cachedUser = localStorage.getItem("user");
     if (cachedUser) {
       const userObject = JSON.parse(cachedUser);
       setUser(userObject);
       blogService.setToken(userObject.token);
     }
-  }, [intializeBlogs, setUser]);
-
-  const match = useMatch("/blogs/:id");
-  const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
+  }, [setUser]);
 
   const handleLogin = async (credentials) => {
     try {
@@ -102,9 +83,9 @@ const App = () => {
       <Notification />
       <ErrorBoundary>
         <Routes>
-          <Route path="/" element={<Blogs blogs={blogs} />} />
+          <Route path="/" element={<Blogs />} />
           {user && <Route path="/create" element={<AddBlog />} />}
-          <Route path="/blogs/:id" element={<Blog user={user} blog={blog} />} />
+          <Route path="/blogs/:id" element={<Blog user={user} />} />
           <Route
             path="/login"
             element={
