@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { useUserStore, useBlogActions } from "../store";
 import { useNavigate, useParams } from "react-router-dom";
-import { useNotificationDispatch } from "../context/NotificationContext";
+import { useNotificationDispatch } from "../hooks/useNotification";
 import { useBlogs } from "../hooks/useBlogs";
 
 const Blog = () => {

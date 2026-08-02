@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { Container } from "@mui/material";
 import App from "./App";
 import "./index.css";
-import { NotificationProvider } from "./context/NotificationContext";
+import { NotificationProvider } from "./contexts/notification/NotificationProvider";
 
 const queryClient = new QueryClient();
 

@@ -1,15 +1,8 @@
-import { createContext, useContext, useReducer } from "react";
-
-export const NotificationContext = createContext(null);
-export const NotificationDispatchContext = createContext(null);
-
-export function useNotification() {
-  return useContext(NotificationContext);
-}
-
-export function useNotificationDispatch() {
-  return useContext(NotificationDispatchContext);
-}
+import { useReducer } from "react";
+import {
+  NotificationContext,
+  NotificationDispatchContext,
+} from "./NotificationContext";
 
 const initialNotification = {
   message: "",

@@ -9,7 +9,7 @@ import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { useUserStore, useUserActions } from "./store";
-import { useNotificationDispatch } from "./context/NotificationContext";
+import { useNotificationDispatch } from "./hooks/useNotification";
 import Navbar from "./components/Navbar";
 
 const App = () => {

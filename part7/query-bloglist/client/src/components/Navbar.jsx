@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserActions, useUserStore } from "../store";
-import { useNotificationDispatch } from "../context/NotificationContext";
+import { useNotificationDispatch } from "../hooks/useNotification";
 import blogService from "../services/blogs";
 
 const Navbar = () => {

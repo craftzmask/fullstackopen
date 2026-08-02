@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { useBlogActions } from "../store";
 import { useNavigate } from "react-router-dom";
-import { useNotificationDispatch } from "../context/NotificationContext";
+import { useNotificationDispatch } from "../hooks/useNotification";
 
 const AddBlog = () => {
   const [title, setTitle] = useState("");
