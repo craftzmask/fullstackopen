@@ -5,45 +5,34 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { useUserStore, useBlogActions } from "../store";
+import { useUserStore } from "../store";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotificationDispatch } from "../hooks/useNotification";
 import { useBlogs } from "../hooks/useBlogs";
 
 const Blog = () => {
   const { user } = useUserStore();
-  const { blogs, isPending } = useBlogs();
-  const { likeBlog, deleteBlog } = useBlogActions();
+  const { blogs, isPending, likeBlog, deleteBlog } = useBlogs();
   const notify = useNotificationDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
   if (isPending) return null;
 
-  const blog = blogs.find((b) => b.id === id);
-
   const handleLike = async (blog) => {
-    try {
-      const likedBlog = await likeBlog(blog);
-      notify(`Liked ${likedBlog.title} by ${likedBlog.author}`);
-    } catch (error) {
-      console.log(error);
-      notify(error.response.data.error, "error");
-    }
+    likeBlog(blog);
+    notify(`Liked ${blog.title} by ${blog.author}`);
   };
 
   const handleDelete = async (blog) => {
-    try {
-      if (confirm(`Deleted blog ${blog.title} by ${blog.author}?`)) {
-        await deleteBlog(blog);
-        notify(`Deleted ${blog.title} by ${blog.author}`);
-        navigate("/");
-      }
-    } catch (error) {
-      notify(error.response.data.error, "error");
+    if (confirm(`Deleted blog ${blog.title} by ${blog.author}?`)) {
+      deleteBlog(blog);
+      notify(`Deleted ${blog.title} by ${blog.author}`);
+      navigate("/");
     }
   };
 
+  const blog = blogs.find((b) => b.id === id);
   if (!blog) return null;
 
   return (
