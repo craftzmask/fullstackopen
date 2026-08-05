@@ -9,13 +9,13 @@ import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { useUserStore, useUserActions } from "./store";
-import { useNotificationDispatch } from "./hooks/useNotification";
+import { useNotificationActions } from "./hooks/useNotification";
 import Navbar from "./components/Navbar";
 
 const App = () => {
   const { user } = useUserStore();
   const { setUser } = useUserActions();
-  const notify = useNotificationDispatch();
+  const { notify } = useNotificationActions();
   const navigate = useNavigate();
 
   useEffect(() => {

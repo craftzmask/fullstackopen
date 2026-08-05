@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useNotificationDispatch } from "../hooks/useNotification";
+import { useNotificationActions } from "../hooks/useNotification";
 import { useBlogs } from "../hooks/useBlogs";
 
 const AddBlog = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
-  const notify = useNotificationDispatch();
+  const { notify } = useNotificationActions();
   const { addBlog } = useBlogs();
   const navigate = useNavigate();
 

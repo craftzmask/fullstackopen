@@ -5,11 +5,11 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import blogService from "../services/blogs";
-import { useNotificationDispatch } from "./useNotification";
+import { useNotificationActions } from "./useNotification";
 
 export const useBlogs = () => {
   const queyrClient = useQueryClient();
-  const notify = useNotificationDispatch();
+  const { notify } = useNotificationActions();
 
   const result = useQuery({
     queryKey: ["blogs"],

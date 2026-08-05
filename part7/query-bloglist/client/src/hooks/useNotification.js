@@ -8,6 +8,6 @@ export function useNotification() {
   return useContext(NotificationContext);
 }
 
-export function useNotificationDispatch() {
+export function useNotificationActions() {
   return useContext(NotificationDispatchContext);
 }

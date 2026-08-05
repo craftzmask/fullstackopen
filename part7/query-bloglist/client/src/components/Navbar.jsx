@@ -1,12 +1,12 @@
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserActions, useUserStore } from "../store";
-import { useNotificationDispatch } from "../hooks/useNotification";
+import { useNotificationActions } from "../hooks/useNotification";
 import blogService from "../services/blogs";
 
 const Navbar = () => {
   const { user } = useUserStore();
-  const notify = useNotificationDispatch();
+  const { notify } = useNotificationActions();
   const { clearUser } = useUserActions();
   const navigate = useNavigate();
 

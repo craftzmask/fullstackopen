@@ -24,7 +24,7 @@ export function NotificationProvider({ children }) {
 
   return (
     <NotificationContext value={notification}>
-      <NotificationDispatchContext value={notify}>
+      <NotificationDispatchContext value={{ notify }}>
         {children}
       </NotificationDispatchContext>
     </NotificationContext>
