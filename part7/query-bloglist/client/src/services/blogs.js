@@ -26,7 +26,6 @@ const create = async (blog) => {
 };
 
 const like = async (blog) => {
-  console.log(blog);
   const response = await axios.put(`${baseUrl}/${blog.id}`, {
     ...blog,
     user: blog.user.id,

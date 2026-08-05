@@ -1,22 +1,18 @@
 import { useEffect } from "react";
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
-import loginService from "./services/login";
 import Login from "./components/Login";
 import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { useNotificationActions } from "./hooks/useNotification";
 import Navbar from "./components/Navbar";
 import { useUser, useUserActions } from "./hooks/useUser";
 
 const App = () => {
   const user = useUser();
   const { setUser } = useUserActions();
-  const { notify } = useNotificationActions();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const cachedUser = localStorage.getItem("user");
@@ -26,19 +22,6 @@ const App = () => {
       blogService.setToken(userObject.token);
     }
   }, [setUser]);
-
-  const handleLogin = async (credentials) => {
-    try {
-      const userResponse = await loginService.login(credentials);
-      setUser(userResponse);
-      blogService.setToken(userResponse.token);
-      localStorage.setItem("user", JSON.stringify(userResponse));
-      notify(`Welcome back ${userResponse.name ?? userResponse.username}`);
-      navigate("/");
-    } catch {
-      notify("Wrong username or password", "error");
-    }
-  };
 
   return (
     <div>
@@ -51,13 +34,7 @@ const App = () => {
           <Route path="/blogs/:id" element={<Blog />} />
           <Route
             path="/login"
-            element={
-              user ? (
-                <Navigate to="/" replace={true} />
-              ) : (
-                <Login onSubmit={handleLogin} />
-              )
-            }
+            element={user ? <Navigate to="/" replace={true} /> : <Login />}
           />
           <Route path="*" element={<h2>404 - Page Not found</h2>} />
         </Routes>
