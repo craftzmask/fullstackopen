@@ -19,7 +19,7 @@ export const useBlogs = () => {
 
   const newBlogMutation = useMutation({
     mutationFn: blogService.create,
-    onSuccess: (blog) => {
+    onSuccess: () => {
       queyrClient.invalidateQueries({ queryKey: ["blogs"] });
     },
     onError: (error) => {

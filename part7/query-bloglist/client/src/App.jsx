@@ -8,12 +8,12 @@ import Login from "./components/Login";
 import AddBlog from "./components/AddBlog";
 import Blogs from "./components/Blogs";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { useUserStore, useUserActions } from "./store";
 import { useNotificationActions } from "./hooks/useNotification";
 import Navbar from "./components/Navbar";
+import { useUser, useUserActions } from "./hooks/useUser";
 
 const App = () => {
-  const { user } = useUserStore();
+  const user = useUser();
   const { setUser } = useUserActions();
   const { notify } = useNotificationActions();
   const navigate = useNavigate();
