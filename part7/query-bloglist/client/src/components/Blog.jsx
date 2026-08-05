@@ -5,12 +5,13 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { useBlogActions } from "../store";
+import { useUserStore, useBlogActions } from "../store";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotificationDispatch } from "../context/NotificationContext";
 import { useBlogs } from "../hooks/useBlogs";
 
-const Blog = ({ user }) => {
+const Blog = () => {
+  const { user } = useUserStore();
   const { blogs, isPending } = useBlogs();
   const { likeBlog, deleteBlog } = useBlogActions();
   const notify = useNotificationDispatch();
