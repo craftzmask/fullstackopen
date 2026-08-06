@@ -11,9 +11,9 @@ import { useBlogs } from "../hooks/useBlogs";
 import { useUser } from "../hooks/useUser";
 
 const Blog = () => {
-  const user = useUser();
   const { blogs, isPending, likeBlog, deleteBlog } = useBlogs();
   const { notify } = useNotificationActions();
+  const user = useUser();
   const navigate = useNavigate();
   const { id } = useParams();
 

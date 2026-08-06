@@ -9,17 +9,17 @@ import Blogs from "./components/Blogs";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import { useUser, useUserActions } from "./hooks/useUser";
+import { getUser } from "./services/persistentUser";
 
 const App = () => {
   const user = useUser();
   const { setUser } = useUserActions();
 
   useEffect(() => {
-    const cachedUser = localStorage.getItem("user");
+    const cachedUser = getUser();
     if (cachedUser) {
-      const userObject = JSON.parse(cachedUser);
-      setUser(userObject);
-      blogService.setToken(userObject.token);
+      setUser(cachedUser);
+      blogService.setToken(cachedUser.token);
     }
   }, [setUser]);
 

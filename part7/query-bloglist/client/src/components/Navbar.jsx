@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useNotificationActions } from "../hooks/useNotification";
 import blogService from "../services/blogs";
 import { useUser, useUserActions } from "../hooks/useUser";
+import { removeUser } from "../services/persistentUser";
 
 const Navbar = () => {
   const user = useUser();
@@ -12,7 +13,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     clearUser();
-    localStorage.removeItem("user");
+    removeUser();
     blogService.setToken(null);
     notify("See you again");
     navigate("/login");

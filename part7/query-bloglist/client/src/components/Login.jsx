@@ -1,33 +1,31 @@
-import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 import { useUserActions } from "../hooks/useUser";
 import { useNotificationActions } from "../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
+import { saveUser } from "../services/persistentUser";
+import { useField } from "../hooks/useField";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const username = useField("username");
+  const password = useField("password", "password");
   const { setUser } = useUserActions();
   const { notify } = useNotificationActions();
   const navigate = useNavigate();
-
-  const onChange = (e, callback) => {
-    callback(e.target.value);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await loginService.login({ username, password });
+      const response = await loginService.login({
+        username: username.value,
+        password: password.value,
+      });
       setUser(response);
+      saveUser(JSON.stringify(response));
       blogService.setToken(response.token);
-      localStorage.setItem("user", JSON.stringify(response));
       notify(`Welcome back ${response.name ?? response.username}`);
-      setUsername("");
-      setPassword("");
       navigate("/");
     } catch {
       notify("Wrong username or password", "error");
@@ -39,20 +37,10 @@ const Login = () => {
       <h2>log in to application</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <TextField
-            label="username"
-            value={username}
-            onChange={(e) => onChange(e, setUsername)}
-            variant="standard"
-          />
+          <TextField {...username} variant="standard" />
         </div>
         <div>
-          <TextField
-            label="password"
-            value={password}
-            onChange={(e) => onChange(e, setPassword)}
-            variant="standard"
-          />
+          <TextField {...password} variant="standard" />
         </div>
 
         <Button type="submit" variant="contained" style={{ marginTop: 10 }}>

@@ -1,28 +1,25 @@
-import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useNotificationActions } from "../hooks/useNotification";
 import { useBlogs } from "../hooks/useBlogs";
+import { useField } from "../hooks/useField";
 
 const AddBlog = () => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const title = useField("title");
+  const author = useField("title");
+  const url = useField("title");
+  const navigate = useNavigate();
   const { notify } = useNotificationActions();
   const { addBlog } = useBlogs();
-  const navigate = useNavigate();
-
-  const onChange = (e, callback) => {
-    callback(e.target.value);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    addBlog({ title, author, url });
-    notify(`Added ${title} succesfully`);
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    addBlog({
+      title: title.value,
+      author: author.value,
+      url: url.value,
+    });
+    notify(`Added ${title.value} succesfully`);
     navigate("/");
   };
 
@@ -31,28 +28,13 @@ const AddBlog = () => {
       <h2>create a new blog</h2>
       <form onSubmit={handleSubmit} style={{ width: 500 }}>
         <div style={{ marginTop: 10 }}>
-          <TextField
-            fullWidth
-            label="title"
-            value={title}
-            onChange={(e) => onChange(e, setTitle)}
-          />
+          <TextField fullWidth {...title} />
         </div>
         <div style={{ marginTop: 10 }}>
-          <TextField
-            fullWidth
-            label="author"
-            value={author}
-            onChange={(e) => onChange(e, setAuthor)}
-          />
+          <TextField fullWidth {...author} />
         </div>
         <div style={{ marginTop: 10 }}>
-          <TextField
-            fullWidth
-            label="url"
-            value={url}
-            onChange={(e) => onChange(e, setUrl)}
-          />
+          <TextField fullWidth {...url} />
         </div>
         <Button type="submit" variant="contained" style={{ marginTop: 10 }}>
           create
